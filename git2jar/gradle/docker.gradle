@@ -1,7 +1,7 @@
 docker {
     javaApplication {
         ports = [ 8080 ]
-        baseImage = 'eclipse-temurin:17.0.7_7-jre-alpine'
+        baseImage = 'eclipse-temurin:17.0.7_7-jdk-alpine'
         images = [ (findProperty('dockerreg')?:'') + project.name ]
         maintainer = 'SoltauFintel'
         mainClassName = application.mainClass
@@ -11,7 +11,11 @@ docker {
 dockerCreateDockerfile {
     outputs.upToDateWhen { false }
     doLast {
+        copy {
+            from 'test/gradle-8.4-bin.zip'
+            into 'build/docker'
+        }
         def dockerfile = destFile.get().asFile
-        dockerfile.text = dockerfile.text.replace('WORKDIR', 'RUN apk add bash nano\nENV TZ=Europe/Berlin\nWORKDIR')
+        dockerfile.text = dockerfile.text.replace('WORKDIR', 'RUN apk add bash nano\nENV TZ=Europe/Berlin\nADD gradle-8.4-bin.zip /\nWORKDIR')
     }
 }

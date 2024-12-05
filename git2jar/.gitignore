@@ -2,3 +2,6 @@
 /build/
 /.gradle/
 /AppConfig.properties
+/*.txt
+/*.bat
+/test/gradle*.zip

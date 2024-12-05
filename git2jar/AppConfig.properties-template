@@ -1,3 +1,19 @@
 port=8080
 development=true
 app.name=git2jar
+
+base-dir=
+files-dir=files
+workdir=workdir
+
+user.salt=
+user.password=
+user.login=
+# number > 7000
+encryption-frequency=
+user.mail=
+
+# test data
+tag=
+url=
+buildcmd=
