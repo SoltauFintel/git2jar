@@ -3,21 +3,36 @@ package git2jar.project;
 import git2jar.build.User;
 
 public class Project {
+    private String id;
+    // TODO UserId (Owner)
     /** Git project URL */
     private String url; // TODO Funktioniert das auch wenn ".git" am Ende ist?
+    /** Git user/credentials */
     private User user = new User();
+    /** folder in in Git repository */
     private String dir;
+    /** Gradle build command */
     private String buildCommand;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getUrl() {
         return url;
     }
+    
+    public String getLastUrlPart() {
+        return url != null && url.contains("/") ? url.substring(url.lastIndexOf("/") + 1) : "";
+    }
 
     public void setUrl(String url) {
         this.url = url;
-        if (url != null && url.contains("/")) {
-            dir = url.substring(url.lastIndexOf("/") + 1);
-        }
+        dir = getLastUrlPart();
     }
     
     public User getUser() {

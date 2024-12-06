@@ -13,6 +13,11 @@ import github.soltaufintel.amalia.web.builder.LoggingInitializer;
 import github.soltaufintel.amalia.web.builder.WebAppBuilder;
 import github.soltaufintel.amalia.web.config.AppConfig;
 
+/**
+ * Es gibt 2 Programme: WEB und SERVE.
+ * WEB enthält Project und Build.
+ * Beide Programme teilen sich einen Artefakte Ordner.
+ */
 public class Git2jarApp {
     public static final String VERSION = "0.1.0";
     
@@ -52,7 +57,7 @@ public class Git2jarApp {
         new WebAppBuilder(VERSION)
             .withLogging(new LoggingInitializer(Level.INFO, "{date} {level}  {message}"))
             .withInitializer(c -> Config.config = new Config(c))
-            .withAuth(new SimpleAuth(new AppConfig())) // TODO Amalia: Ich brauch hier die config.
+            .withAuth(new SimpleAuth(new AppConfig())) // TODO Amalia withAuth: Ich brauch hier die config.
             .withTemplatesFolders(Web.class, "/templates")
             .withRoutes(new Web())
             .build()
@@ -61,6 +66,7 @@ public class Git2jarApp {
     }
     
     private static void serve() {
+        // not password protected
         new WebAppBuilder(VERSION)
             .withLogging(new LoggingInitializer(Level.INFO, "{date} {level}  {message}"))
             .withInitializer(c -> Config.config = new Config(c))

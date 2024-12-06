@@ -2,7 +2,22 @@
 
 <div class="row"> 
     <div class="col-lg-12">
-        <h1 class="page-header">git2jar app</h1>
-
+        <h1 class="page-header">{{title}}</h1>
+        
+        {{each p in projects}}
+            <h3>{{p.url}}</h3>
+            {{if p.empty}}
+                <p>no tags</p>
+            {{else}}
+                {{each tag in p.tags}}
+                    <h4>{{tag.tag}}</h4>
+                    {{if tag.built}}
+                        <pre class="bb">implementation '{{p.ga}}:{{tag.tag}}'</pre>
+                    {{else}}
+                        <p class="bb"><a href="/build/{{p.id}}/{{tag.tag}}" class="btn btn-success">Build</a></p>
+                    {{/if}}
+                {{/each}}
+            {{/if}}
+        {{/each}}
     </div>
 </div>

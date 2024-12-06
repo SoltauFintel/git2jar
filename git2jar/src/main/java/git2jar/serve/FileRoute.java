@@ -48,4 +48,5 @@ public class FileRoute implements Route {
         res.status(404);
         return "File not found";
     }
+    // TODO Man könnte die file usage dauerhaft speichern. Ziel: rausfinden was weg kann
 }
