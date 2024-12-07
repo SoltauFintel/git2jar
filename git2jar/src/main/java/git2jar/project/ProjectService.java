@@ -83,7 +83,7 @@ public class ProjectService {
     }
     
     public List<Tag> getTags(Project p, int limit) {
-    	File workspace = new File(Config.config.getWorkdir(), "tags/" + p.getLastUrlPart());
+    	File workspace = new File(Config.config.getTagsWorkDir(), "tags/" + p.getLastUrlPart());
     	GitService git = new GitService(workspace);
     	if (workspace.isDirectory()) {
     		git.fetch(p.getUser());

@@ -7,7 +7,6 @@ import java.util.Optional;
 
 import org.pmw.tinylog.Logger;
 
-import git2jar.base.ShellScriptExecutor;
 import git2jar.build.Job.JobStatus;
 import git2jar.config.Config;
 import git2jar.project.Project;
@@ -53,44 +52,17 @@ public class BuildService {
 		}
 	}
 
-	public BuildResult build(Project project, String tag) {
-        BuildResult ret = new BuildResult();
-        String name = project.getUrl();
-        name = name.substring(name.lastIndexOf("/") + 1); // TO-DO Name später aus gesamter URL ermitteln
-
-        // Step 1: clone/pull
-        File workspace = clone(project, tag, name);
-        
-        // Step 2: build
-        String log = build(project, workspace);
-                
-        ret.setSuccess(log != null && log.contains("BUILD SUCCESSFUL"));
-        ret.setLog(log);
-        return ret;
-    }
-
-    private File clone(Project project, String tag, String name) {
-        File workspace = new File(Config.config.getWorkdir(), name);
-        GitService git = new GitService(workspace);
-        if (workspace.isDirectory()) {
-            Logger.info("pull: " + project.getUrl() + " | workspace: " + workspace.getAbsolutePath());
-            git.pull(project.getUser(), project.getMasterBranch());
-        } else {
-            Logger.info("clone: " + project.getUrl() + " | workspace: " + workspace.getAbsolutePath());
-            git.clone(project.getUrl(), project.getUser(), tag, false);
-        }
-        Logger.info("switching to tag " + tag);
-        git.selectCommit(tag);
-        return workspace;
-    }
-
-    private String build(Project project, File workspace) {
-        File dir = new File(workspace, project.getDir());
-        String cmd = "cd " + dir.getAbsolutePath() + " && " + project.getBuildCommand();
-        Logger.info("build command: " + cmd);
-        return new ShellScriptExecutor().executeAndGetLog(cmd, dir);
-    }
-
+	public BuildResult build(Job job) {
+		BuildResult ret = new BuildResult();
+		File dir = new File(Config.config.getTagsWorkDir(), job.getJobId());
+		dir.mkdirs();
+		Logger.info("job dir: " + dir.getAbsolutePath());
+		
+		// TODO Baustelle
+		
+		return ret;
+	}
+	
 	public void clearDoneJobs() {
 		synchronized (HANDLE) {
 			jobs.removeIf(job -> job.getStatus().equals(JobStatus.FINISHED));

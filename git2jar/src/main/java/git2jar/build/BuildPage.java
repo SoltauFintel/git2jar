@@ -13,6 +13,7 @@ public class BuildPage extends Page {
 		Job job = new BuildService().getStatus(id, tag);
 		
 		put("title", "Building " + job.getProject().getLastUrlPart());
+		put("jobId", esc(job.getJobId()));
 		put("url", esc(job.getProject().getUrl()));
 		put("tag", esc(job.getTag()));
 		put("status", esc(job.getStatus().name()));

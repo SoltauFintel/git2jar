@@ -32,10 +32,18 @@ public class Config {
         getDataDir().mkdirs();
     }
     
-    public File getWorkdir() {
+    private File getWorkdir() {
         return new File(basedir, workdir);
     }
-    
+
+    public File getTagsWorkDir() {
+    	return new File(getWorkdir(), "tags");
+    }
+
+    public File getJobsWorkDir() {
+    	return new File(getWorkdir(), "jobs");
+    }
+
     public File getFilesDir() {
         return new File(basedir, filesdir);
     }

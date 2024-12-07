@@ -6,6 +6,7 @@ import org.pmw.tinylog.Logger;
 
 import git2jar.build.BuildResult;
 import git2jar.build.BuildService;
+import git2jar.build.Job;
 import github.soltaufintel.amalia.web.config.AppConfig;
 
 public class Testmode {
@@ -18,8 +19,9 @@ public class Testmode {
         Project project = new Project();
         project.setUrl(config.get("url"));
         project.setBuildCommand(config.get("buildcmd").replace("{tag}", tag));
-
-        BuildResult r = new BuildService().build(project, tag);
+        Job job = new Job(project, tag);
+        
+        BuildResult r = new BuildService().build(job);
         
         Logger.info("---------------------------------------------------------");
         Logger.info(r.getLog());
