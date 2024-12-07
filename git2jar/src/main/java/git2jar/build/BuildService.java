@@ -1,18 +1,50 @@
 package git2jar.build;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import org.pmw.tinylog.Logger;
 
 import git2jar.base.ShellScriptExecutor;
+import git2jar.build.Job.JobStatus;
 import git2jar.config.Config;
 import git2jar.project.Project;
+import git2jar.project.ProjectService;
 
 public class BuildService {
+	public static final List<Job> jobs = new ArrayList<>();
     // TODO Build soll in einem extra Container laufen, der nur während des Builds existiert.
     // TODO Ergebnisdateien dem serve-Programm zur Verfügung stellen
 
-    public BuildResult build(Project project, String tag) {
+	/**
+	 * Get job or creates job if it does not exist
+	 * @param id project ID
+	 * @param tag version
+	 * @return Job
+	 */
+	public Job getStatus(String id, String tag) {
+		return jobs.stream().filter(job -> job.getProject().getId().equals(id) && job.getTag().equals(tag)).findFirst().orElse(createJob(id, tag));
+	}
+	
+    private Job createJob(String id, String tag) {
+    	Project p = new ProjectService().get(id);
+    	Job job = new Job(p, tag);
+    	jobs.add(job);
+    	startNextJob();
+		return job;
+	}
+
+	public static void startNextJob() {
+		Optional<Job> next = BuildService.jobs.stream().filter(j -> j.getStatus() == JobStatus.WAITING).findFirst();
+		if (next.isPresent()) {
+			// start next job
+			next.get().start();
+		}
+	}
+
+	public BuildResult build(Project project, String tag) {
         BuildResult ret = new BuildResult();
         String name = project.getUrl();
         name = name.substring(name.lastIndexOf("/") + 1); // TO-DO Name später aus gesamter URL ermitteln

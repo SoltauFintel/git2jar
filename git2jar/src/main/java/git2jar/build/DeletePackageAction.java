@@ -1,5 +1,7 @@
 package git2jar.build;
 
+import org.pmw.tinylog.Logger;
+
 import git2jar.project.ProjectService;
 import github.soltaufintel.amalia.web.action.Action;
 
@@ -11,5 +13,8 @@ public class DeletePackageAction extends Action {
 		String tag = ctx.pathParam("tag");
 		
 		new ProjectService().deletePackage(id, tag);
+		Logger.info("package deleted: #" + id + ", tag " + tag);
+		
+		ctx.redirect("/project");
 	}
 }

@@ -6,11 +6,14 @@ public class BuildPage extends Page {
 
 	@Override
 	protected void execute() {
-		// TODO Is build in job queue?
-		//      yes: show job status
-		//      no: create job and put it into the queue
-		// Queue can only work at one job at a time.
+		String id = ctx.pathParam("id");
+		String tag = ctx.pathParam("tag");
+
+		Job job = new BuildService().getStatus(id, tag);
 		
-		put("title", "Build");
+		put("title", "Building " + job.getProject().getLastUrlPart());
+		put("url", esc(job.getProject().getUrl()));
+		put("tag", esc(job.getTag()));
+		put("status", esc(job.getStatus().name()));
 	}
 }
