@@ -4,20 +4,46 @@
     <div class="col-lg-12">
         <h1 class="page-header">{{title}}</h1>
         
+		<p>
+			<a href="/project/reload" class="btn btn-default br"><i class="fa fa-refresh"></i> Refresh</a>
+			{{if not full}}
+				<a href="?m=full" class="btn btn-default">Show all tags</a>
+			{{/if}}
+		</p>
+		{{if full}}
+			<p class="mt2"><small>
+				{{each p in projects}}
+					<a href="#{{p.id}}">{{p.url}}</a><br/>
+				{{/each}}
+			</small></p>
+		{{/if}}
+			
         {{each p in projects}}
-            <h3>{{p.url}}</h3>
+			<hr/>
+            <h3 id="{{p.id}}">{{p.url}}</h3>
             {{if p.empty}}
                 <p>no tags</p>
             {{else}}
                 {{each tag in p.tags}}
                     <h4>{{tag.tag}}</h4>
                     {{if tag.built}}
-                        <pre class="bb">implementation '{{p.ga}}:{{tag.tag}}'</pre>
+						<table style="width: 100%;">
+							<tr>
+								<td style="width: 100%;"><pre class="ml3{{if not deleteAllowed}} mr4{{/if}}">implementation '{{p.ga}}:{{tag.tag}}'</pre></td>
+								{{if deleteAllowed}}
+									<td>
+										<p class="ml2 mr4"><a onclick="return confirm('Delete?');" href="/project/{{p.id}}/{{tag.tag}}/delete"
+											class="btn btn-danger"><i class="fa fa-trash" title="Delete"></i></a></p>
+									</td>
+								{{/if}}
+							</tr>
+						</table>
                     {{else}}
-                        <p class="bb"><a href="/build/{{p.id}}/{{tag.tag}}" class="btn btn-success">Build</a></p>
+                        <p class="bb"><a href="/project/{{p.id}}/{{tag.tag}}/build" class="btn btn-success"><i class="fa fa-wrench"></i> Build</a></p>
                     {{/if}}
                 {{/each}}
             {{/if}}
         {{/each}}
+		<hr/>
     </div>
 </div>

@@ -2,6 +2,7 @@ package git2jar.build;
 
 import java.io.File;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.RefNotFoundException;
@@ -168,5 +169,21 @@ public class GitService {
             return null;
         }
         return new UsernamePasswordCredentialsProvider(user.getLogin(), user.getPassword());
+    }
+    
+    public List<String> getTags() {
+    	final String prefix = "refs/tags/";
+        try (Git git = Git.open(workspace)) {
+			return git.tagList().call().stream().map(ref -> {
+				String tag = ref.getName();
+				if (tag.startsWith(prefix)) {
+					tag = tag.substring(prefix.length());
+				}
+				return tag;
+			})
+			.toList();
+        } catch (Exception e) {
+        	throw new RuntimeException("Error loading tags", e);
+        }
     }
 }

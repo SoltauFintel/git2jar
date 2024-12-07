@@ -2,16 +2,19 @@ package git2jar.project;
 
 import java.util.Objects;
 
+import git2jar.build.VersionNumber;
+
 public class Tag implements Comparable<Tag> {
     private String tag;
     private boolean built;
+    private String sort;
 
     public Tag() {
         this("", false);
     }
 
     public Tag(String tag, boolean built) {
-        this.tag = tag;
+        setTag(tag);
         this.built = built;
     }
 
@@ -21,6 +24,7 @@ public class Tag implements Comparable<Tag> {
 
     public void setTag(String tag) {
         this.tag = tag;
+        this.sort = new VersionNumber(tag).sort();
     }
 
     public boolean isBuilt() {
@@ -50,6 +54,10 @@ public class Tag implements Comparable<Tag> {
 
     @Override
     public int compareTo(Tag o) {
-        return o.tag.compareTo(tag);
+        return o.sort.compareTo(sort);
+    }
+    
+    public String sort() {
+    	return sort;
     }
 }

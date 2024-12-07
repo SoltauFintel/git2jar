@@ -1,0 +1,15 @@
+package git2jar.build;
+
+import git2jar.project.ProjectService;
+import github.soltaufintel.amalia.web.action.Action;
+
+public class DeletePackageAction extends Action {
+
+	@Override
+	protected void execute() {
+		String id = ctx.pathParam("id");
+		String tag = ctx.pathParam("tag");
+		
+		new ProjectService().deletePackage(id, tag);
+	}
+}
