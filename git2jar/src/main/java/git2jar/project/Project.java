@@ -91,6 +91,10 @@ public class Project {
 		ret += "." + url.substring(oo + 1, ooo);
 		return ret.toLowerCase();
 	}
+	
+	public String getGroupDir() {
+		return getGroup().replace(".", "/") + "/" + getLastUrlPart();
+	}
 
 	public List<Tag> getTags(ProjectService sv, int limit) {
 		List<Tag> ret = tags.get("" + limit);

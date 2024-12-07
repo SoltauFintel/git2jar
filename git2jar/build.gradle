@@ -17,6 +17,7 @@ application {
 dependencies {
     implementation 'com.github.SoltauFintel.amalia:amalia-web:0.18.1'
     implementation 'org.eclipse.jgit:org.eclipse.jgit:6.5.0.202303070854-r'
+    implementation 'com.github.docker-java:docker-java:3.3.4'
 
     testImplementation 'junit:junit:4.13.2'
 }

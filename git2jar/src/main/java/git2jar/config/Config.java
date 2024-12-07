@@ -51,4 +51,8 @@ public class Config {
     public File getDataDir() {
         return new File(basedir, datadir);
     }
+    
+    public String getImage() {
+    	return "git2jar-jdk17"; // TODO
+    }
 }

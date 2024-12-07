@@ -100,7 +100,7 @@ public class ProjectService {
     }
     
     public String getProjectFilesDir(Project p) {
-    	return (Config.config.getFilesDir() + "/" + p.getLastUrlPart()).replace("\\", "/");
+		return (Config.config.getFilesDir() + "/" + p.getGroupDir()).replace("\\", "/");
     }
 
 	public void deletePackage(String id, String tag) {

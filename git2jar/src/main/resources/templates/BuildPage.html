@@ -5,10 +5,11 @@
         <h1 class="page-header">{{title}}</h1>
 		
 		<h3>{{url}}</h3>
-		<p>{{tag}}</p>
-		<p>Job ID: {{jobId}}</p>
-		<p>Status: {{status}}</p>
+		<p>tag: {{tag}}</p>
+		<p>Status: {{status}} | Job ID: {{jobId}}</p>
+		<p style="font-size: 14pt;">{{if success}}<span style="color: #0c0; font-weight: bold;">SUCCESS</span>{{else if finished}}<span
+			class="error">Job failed</span>{{else}}Job is running...{{/if}}</p>
 		<pre>{{log}}</pre>
-		<p>{{if success}}erfolgreich{{else if finished}}<span class="error">Job gescheitert</span>{{else}}Job läuft noch.{{/if}}</p>
+		<p>{{duration}}</p>
 	</div>
 </div>
