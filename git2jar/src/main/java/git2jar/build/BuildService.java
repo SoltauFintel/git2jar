@@ -14,6 +14,7 @@ import git2jar.project.Project;
 import git2jar.project.ProjectService;
 
 public class BuildService {
+	private static final String HANDLE = "HANDLE_BS";
 	public static final List<Job> jobs = new ArrayList<>();
     // TODO Build soll in einem extra Container laufen, der nur während des Builds existiert.
     // TODO Ergebnisdateien dem serve-Programm zur Verfügung stellen
@@ -25,13 +26,21 @@ public class BuildService {
 	 * @return Job
 	 */
 	public Job getStatus(String id, String tag) {
-		return jobs.stream().filter(job -> job.getProject().getId().equals(id) && job.getTag().equals(tag)).findFirst().orElse(createJob(id, tag));
+		synchronized (HANDLE) {
+			Job ret = jobs.stream().filter(job -> job.getProject().getId().equals(id) && job.getTag().equals(tag)).findFirst().orElse(null);
+			if (ret == null) {
+				Logger.info("Job #" + id + ", " + tag + " not found -> create new job! " + jobs.size());
+				ret = createJob(id, tag);
+			}
+			return ret;
+		}
 	}
 	
     private Job createJob(String id, String tag) {
     	Project p = new ProjectService().get(id);
     	Job job = new Job(p, tag);
     	jobs.add(job);
+    	Logger.info("Job created. " + p.getUrl() + ", " + tag);
     	startNextJob();
 		return job;
 	}
@@ -65,7 +74,7 @@ public class BuildService {
         GitService git = new GitService(workspace);
         if (workspace.isDirectory()) {
             Logger.info("pull: " + project.getUrl() + " | workspace: " + workspace.getAbsolutePath());
-            git.pull(project.getUser());
+            git.pull(project.getUser(), project.getMasterBranch());
         } else {
             Logger.info("clone: " + project.getUrl() + " | workspace: " + workspace.getAbsolutePath());
             git.clone(project.getUrl(), project.getUser(), tag, false);
@@ -81,4 +90,10 @@ public class BuildService {
         Logger.info("build command: " + cmd);
         return new ShellScriptExecutor().executeAndGetLog(cmd, dir);
     }
+
+	public void clearDoneJobs() {
+		synchronized (HANDLE) {
+			jobs.removeIf(job -> job.getStatus().equals(JobStatus.FINISHED));
+		}
+	}
 }

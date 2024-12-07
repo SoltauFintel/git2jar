@@ -1,6 +1,7 @@
 package git2jar.web;
 
 import git2jar.build.BuildPage;
+import git2jar.build.ClearDoneJobsAction;
 import git2jar.build.DeletePackageAction;
 import git2jar.project.AddProjectPage;
 import git2jar.project.DeleteProjectAction;
@@ -23,6 +24,7 @@ public class Web extends RouteDefinitions {
         form("/project/add", AddProjectPage.class);
         get("/project/delete", DeleteProjectAction.class);
         get("/project/reload", ReloadProjectsAction.class);
+        get("/project/clear-done-jobs", ClearDoneJobsAction.class);
         form("/project/:id", EditProjectPage.class);
         get("/project", ProjectsPage.class);
         

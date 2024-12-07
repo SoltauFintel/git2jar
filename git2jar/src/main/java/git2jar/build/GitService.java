@@ -76,6 +76,17 @@ public class GitService {
         }
     }
 
+    public void pull(User user, String branch) {
+        try (Git git = Git.open(workspace)) {
+            git.pull()
+                .setCredentialsProvider(getUsernamePasswordCredentialsProvider(user))
+                .setRemoteBranchName(branch)
+                .call();
+        } catch (Exception e) {
+            throw new RuntimeException("Error pulling Git repository!", e);
+        }
+    }
+
     /**
      * This call may take 4 seconds.
      * @return false if there is a change in the work tree, e.g. an added or changed file

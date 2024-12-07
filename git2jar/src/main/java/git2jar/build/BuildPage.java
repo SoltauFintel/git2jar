@@ -1,5 +1,6 @@
 package git2jar.build;
 
+import git2jar.build.Job.JobStatus;
 import github.soltaufintel.amalia.web.action.Page;
 
 public class BuildPage extends Page {
@@ -15,5 +16,8 @@ public class BuildPage extends Page {
 		put("url", esc(job.getProject().getUrl()));
 		put("tag", esc(job.getTag()));
 		put("status", esc(job.getStatus().name()));
+		put("log", job.getBuildResult() == null ? "" : esc(job.getBuildResult().getLog()));
+		put("success", job.getBuildResult() == null ? false : job.getBuildResult().isSuccess());
+		put("finished", job.getStatus().equals(JobStatus.FINISHED));
 	}
 }

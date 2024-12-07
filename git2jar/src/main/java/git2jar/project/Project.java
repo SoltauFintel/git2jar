@@ -17,6 +17,7 @@ public class Project {
 	private String dir;
 	/** Gradle build command */
 	private String buildCommand;
+	private String masterBranch = "master";
 	private transient Map<String, List<Tag>> tags = new HashMap<>();
 
 	public String getId() {
@@ -102,5 +103,13 @@ public class Project {
 	
 	public void clearCache() {
 		tags.clear();
+	}
+
+	public String getMasterBranch() {
+		return masterBranch;
+	}
+
+	public void setMasterBranch(String masterBranch) {
+		this.masterBranch = masterBranch;
 	}
 }

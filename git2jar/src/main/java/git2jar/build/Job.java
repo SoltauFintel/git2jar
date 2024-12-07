@@ -1,5 +1,7 @@
 package git2jar.build;
 
+import org.pmw.tinylog.Logger;
+
 import git2jar.project.Project;
 
 public class Job {
@@ -46,9 +48,15 @@ public class Job {
 	
 	public void execute() {
 		status = JobStatus.RUNNING;
-		BuildResult result = new BuildService().build(project, tag);
-		setBuildResult(result);
-		status = JobStatus.FINISHED;
+		Logger.info("Job running. " + project.getUrl() + ", " + tag);
+		long start = System.currentTimeMillis();
+		try {
+			buildResult = new BuildService().build(project, tag);
+			System.out.println(":-) success"); // XXX DEBUG
+		} finally {
+			status = JobStatus.FINISHED;
+			Logger.info("Job finished. " + project.getUrl() + ", " + tag + ", " + (System.currentTimeMillis() - start) + "ms");
+		}
 	}
 
 	public enum JobStatus {
