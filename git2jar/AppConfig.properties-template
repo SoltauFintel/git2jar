@@ -5,6 +5,7 @@ app.name=git2jar
 base-dir=
 files-dir=files
 workdir=workdir
+datadir=data
 
 user.salt=
 user.password=
