@@ -23,13 +23,16 @@ public class Config {
     public Config(AppConfig c) {
         basedir = c.get("basedir");
         if (basedir == null || basedir.isEmpty()) {
-            throw new RuntimeException("Missing config property 'basedir'!");
+            throw new RuntimeException("Config option 'basedir' is not set!");
         }
         Logger.debug("Config basedir: " + basedir);
         repository = new File(basedir, c.get("repository", "repository"));
         work = new File(basedir, c.get("work", "work"));
         projects = new File(basedir, c.get("projects", "projects"));
         image = c.get("image", "git2jar-jdk17");
+		if (image == null || image.isBlank()) {
+			throw new RuntimeException("Config option 'image' is not set!");
+		}
     }
     
     public File getTagsWorkDir() {

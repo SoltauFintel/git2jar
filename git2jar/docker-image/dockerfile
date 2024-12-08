@@ -1,4 +1,7 @@
 FROM eclipse-temurin:17.0.7_7-jdk-alpine
+
 RUN apk update && apk add bash nano git
+
 WORKDIR /work
-CMD sh script
+
+CMD sh SCRIPT

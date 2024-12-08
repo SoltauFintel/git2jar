@@ -66,7 +66,7 @@ public class BuildService {
 		Logger.info("Building job #" + job.getJobId() + " ... | dir: " + dir.getAbsolutePath());
 		String cmd = getCommand(job);
 		String image = Config.config.getImage();
-		FileService.savePlainTextFile(new File(dir, "script"), cmd);
+		FileService.savePlainTextFile(new File(dir, "SCRIPT"), cmd);
 		AbstractDocker docker = docker();
 		long start = System.currentTimeMillis();
 		docker.pull(image);
@@ -125,10 +125,7 @@ public class BuildService {
 	private String getCommand(Job job) {
 		Project p = job.getProject();
 		String lp = p.getLastUrlPart();
-		
-		String cmd1 = "git clone " + p.getUrl();
-		// TODO tag wählen!
-		
+		String cmd1 = "git clone -b " + job.getTag() + " " + p.getUrl();
 		String cmd2 = p.getBuildCommand().replace("{tag}", job.getTag());
 		String cmd = cmd1 + " && cd " + lp + "/" + lp + " && " + cmd2 + " && mkdir /work/output"
 				+ " && cp -R ~/.m2/repository /work/output";

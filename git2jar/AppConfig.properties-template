@@ -13,3 +13,5 @@ user.login=
 # number > 7000
 encryption-frequency=
 user.mail=
+
+image=git2jar-jdk17
