@@ -2,9 +2,6 @@ package git2jar.build;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 import org.pmw.tinylog.Logger;
 
@@ -12,46 +9,12 @@ import com.google.common.io.Files;
 
 import git2jar.base.Config;
 import git2jar.base.FileService;
-import git2jar.build.Job.JobStatus;
 import git2jar.docker.AbstractDocker;
 import git2jar.project.Project;
 import git2jar.project.ProjectService;
 
 public class BuildService {
-	private static final String HANDLE = "HANDLE_BS";
-	public static final List<Job> jobs = new ArrayList<>();
-
-	/**
-	 * @param id project ID
-	 * @param tag version
-	 * @return Job ID
-	 */
-	public String createJob(String id, String tag) {
-		synchronized (HANDLE) {
-	    	Project project = new ProjectService().get(id);
-	    	Job job = new Job(project, tag);
-	    	String jobId = job.getJobId();
-	    	jobs.add(job);
-			Logger.info("Job #" + jobId + " created. " + project.getUrl() + ", " + tag);
-	    	startNextJob();
-			return jobId;
-		}
-	}
 	
-	public Job getJob(String jobId) {
-		synchronized (HANDLE) {
-			return jobs.stream().filter(job -> job.getJobId().equals(jobId)).findFirst().orElse(null);
-		}
-	}
-	
-	public static void startNextJob() {
-		Optional<Job> next = BuildService.jobs.stream().filter(j -> j.getStatus() == JobStatus.WAITING).findFirst();
-		if (next.isPresent()) {
-			// start next job
-			next.get().start();
-		}
-	}
-
 	public BuildResult build(Job job) {
 		File dir = new File(Config.config.getJobsWorkDir(), job.getJobId());
 		dir.mkdirs();
@@ -123,11 +86,5 @@ public class BuildService {
 				+ " && cp -R ~/.m2/repository /work/output";
 		Logger.info("SCRIPT: " + cmd);
 		return cmd;
-	}
-	
-	public void clearDoneJobs() {
-		synchronized (HANDLE) {
-			jobs.removeIf(job -> job.getStatus().equals(JobStatus.FINISHED));
-		}
 	}
 }

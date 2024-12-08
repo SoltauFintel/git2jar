@@ -9,7 +9,7 @@ public class JobStatusPage extends Page {
 	protected void execute() {
 		String jobId = ctx.pathParam("jobId");
 
-		Job job = new BuildService().getJob(jobId);
+		Job job = new JobService().getJob(jobId);
 		String log = "";
 		if (job.getBuildResult() != null) {
 			log = esc(job.getBuildResult().getLog());

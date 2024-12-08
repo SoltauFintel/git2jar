@@ -9,7 +9,7 @@ public class ClearDoneJobsAction extends Action {
 
 	@Override
 	protected void execute() {
-		new BuildService().clearDoneJobs();
+		new JobService().clearDoneJobs();
 		
 		ctx.redirect("/");
 	}

@@ -49,7 +49,7 @@ public class Job {
 	public void start() {
 		new Thread(() -> {
 			execute();
-			BuildService.startNextJob();
+			JobService.startNextJob();
 		}).start();
 	}
 	
