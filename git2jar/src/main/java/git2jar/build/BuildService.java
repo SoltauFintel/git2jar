@@ -21,20 +21,28 @@ public class BuildService {
 		dir.mkdirs();
 		Logger.info("Building job #" + job.getJobId() + " ... | dir: " + dir.getAbsolutePath());
 		String cmd = getCommand(job);
-		String image = Config.config.getImage();
 		FileService.savePlainTextFile(new File(dir, "SCRIPT"), cmd);
+		String image = Config.config.getImage();
 		AbstractDocker docker = AbstractDocker.get();
 		long start = System.currentTimeMillis();
-		docker.pull(image);
 		BuildResult ret;
 		try {
 		
+			docker.pull(image);
 			ret = docker.run(image, dir, "/work");
 		
 		} catch (NotFoundException e) {
-			Logger.warn("Image '" + image + "' not found. Creating it...");
-			buildImage(docker, image);
-			ret = docker.run(image, dir, "/work");
+			try {
+				Logger.warn("Image '" + image + "' not found. Building it...");
+				buildImage(docker, image);
+				Logger.info("Docker base image built. Now retrying the actual build...");
+				ret = docker.run(image, dir, "/work");
+			} catch (Exception ex) {
+				Logger.error(ex);
+				ret = new BuildResult();
+				ret.setLog(ex.getClass().getName() + ": " + ex.getMessage());
+				return ret;
+			}
 		} catch (Exception e) {
 			Logger.error(e);
 			ret = new BuildResult();
@@ -64,7 +72,16 @@ public class BuildService {
 	}
 	
 	private void buildImage(AbstractDocker docker, String image) {
-		// TODO Baustelle
+		if (Config.config.getBaseImage() == null || Config.config.getBaseImage().isBlank()) {
+			throw new RuntimeException("Config option 'base-image' is not set! Can not create Docker image.");
+		}
+		String dockerfile = """
+				FROM {from}
+				RUN apk update && apk add bash nano git
+				WORKDIR /work
+				CMD sh SCRIPT
+				""";
+		docker.buildImage(image, dockerfile.replace("{from}", Config.config.getBaseImage()));
 	}
 
 	private void copyOutputFilesToRepository(File dir, StringBuilder sb) {

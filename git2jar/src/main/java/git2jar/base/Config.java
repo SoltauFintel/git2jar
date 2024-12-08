@@ -19,6 +19,8 @@ public class Config {
     private final File jobs;
     /** name of Docker image */
     private final String image;
+    /** name of Docker base image */
+    private final String baseImage;
     
     public Config(AppConfig c) {
         String basedir = c.get("basedir"); // base folder containing the other folders
@@ -34,6 +36,7 @@ public class Config {
 		if (image == null || image.isBlank()) {
 			throw new RuntimeException("Config option 'image' is not set!");
 		}
+        baseImage = c.get("base-image", "eclipse-temurin:17.0.7_7-jdk-alpine");
     }
     
     public File getProjectsDir() {
@@ -55,4 +58,8 @@ public class Config {
     public String getImage() {
     	return image;
     }
+
+	public String getBaseImage() {
+		return baseImage;
+	}
 }

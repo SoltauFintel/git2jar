@@ -3,12 +3,14 @@ package git2jar.build;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.pmw.tinylog.Logger;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.async.ResultCallback;
+import com.github.dockerjava.api.command.BuildImageResultCallback;
 import com.github.dockerjava.api.command.LogContainerCmd;
 import com.github.dockerjava.api.command.PullImageResultCallback;
 import com.github.dockerjava.api.model.AccessMode;
@@ -17,6 +19,9 @@ import com.github.dockerjava.api.model.Frame;
 import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.Info;
 import com.github.dockerjava.api.model.Volume;
+
+import git2jar.base.Config;
+import git2jar.base.FileService;
 
 public abstract class AbstractDocker {
     private final DockerClient docker;
@@ -112,12 +117,20 @@ public abstract class AbstractDocker {
         }
     }
     
-    public void buildImage() {
-    	// TODO Baustelle
-//    	docker.buildImageCmd()
-//    		.withDockerfile()
-//    		.exec();
-    }
+	public void buildImage(String image, String dockerfile) {
+		File file = new File(Config.config.getJobsWorkDir(), "dockerfile_context/dockerfile");
+		FileService.savePlainTextFile(file, dockerfile);
+		try {
+			docker.buildImageCmd()
+				.withDockerfile(file)
+				.withTags(Set.of(image))
+				.exec(new BuildImageResultCallback())
+				.awaitCompletion();
+		} catch (InterruptedException e) {
+			Logger.error(e);
+		}
+		FileService.deleteDir(file.getParentFile());
+	}
 
 	public long getTimeout() {
 		return timeout;

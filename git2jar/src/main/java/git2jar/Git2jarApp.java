@@ -59,7 +59,9 @@ public class Git2jarApp {
             .build()
             .boot();
         System.out.println("==== web mode ====");
-        FileService.deleteDir(Config.config.getJobsWorkDir());
+        if (Config.config.getJobsWorkDir().isDirectory()) {
+        	FileService.deleteDir(Config.config.getJobsWorkDir());
+        }
     }
     
     private static class WebRoutes extends RouteDefinitions {
