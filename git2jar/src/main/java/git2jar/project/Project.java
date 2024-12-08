@@ -31,7 +31,11 @@ public class Project {
 	}
 
 	public String getLastUrlPart() {
-		return url != null && url.contains("/") ? url.substring(url.lastIndexOf("/") + 1) : "";
+		String ret = url != null && url.contains("/") ? url.substring(url.lastIndexOf("/") + 1) : "";
+		if (ret.endsWith(".git")) {
+			ret = ret.substring(0, ret.length() - ".git".length());
+		}
+		return ret;
 	}
 
 	public void setUrl(String url) {
