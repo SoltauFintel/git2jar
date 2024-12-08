@@ -21,7 +21,13 @@ import com.github.dockerjava.api.model.Volume;
 public abstract class AbstractDocker {
     private final DockerClient docker;
     private long timeout = 20;
-    
+
+	public static AbstractDocker get() {
+		String os = System.getProperty("os.name");
+		boolean isWindows = os != null && os.toLowerCase().contains("win");
+		return isWindows ? new WindowsDocker() : new UnixDocker();
+	}
+
     public AbstractDocker(DockerClient docker) {
         this.docker = docker;
     }
@@ -115,15 +121,5 @@ public abstract class AbstractDocker {
 	 */
 	public void setTimeout(long timeout) {
 		this.timeout = timeout;
-	}
-
-	public static AbstractDocker get() {
-		AbstractDocker docker;
-		if (ShellScriptExecutor.isWindows()) {
-			docker = new WindowsDocker();
-		} else {
-			docker = new UnixDocker();
-		}
-		return docker;
 	}
 }
