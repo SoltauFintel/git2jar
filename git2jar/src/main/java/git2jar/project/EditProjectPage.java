@@ -19,6 +19,7 @@ public class EditProjectPage extends Page {
             p.setBranch(ctx.formParam("branch"));
             sv.save(p);
             ctx.redirect("/project");
+            // TODO IndexPage Refresh auslösen
         } else {
             put("title", "Edit project " + esc(p.getLastUrlPart().isEmpty() ? p.getUrl() : p.getLastUrlPart()));
             put("id", esc(p.getId()));

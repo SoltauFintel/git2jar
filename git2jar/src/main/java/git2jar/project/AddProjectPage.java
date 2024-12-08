@@ -9,6 +9,7 @@ public class AddProjectPage extends Page {
         if (isPOST()) {
             new ProjectService().create(ctx.formParam("url"));
             ctx.redirect("/project");
+            // TODO IndexPage Refresh auslösen
         } else {
             put("title", "Add project");
         }
