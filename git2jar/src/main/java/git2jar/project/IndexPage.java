@@ -1,6 +1,8 @@
 package git2jar.project;
 
+import java.io.File;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.github.template72.data.DataList;
 import com.github.template72.data.DataMap;
@@ -25,13 +27,22 @@ public class IndexPage extends Page {
             DataMap map = list.add();
             map.put("id", esc(p.getId()));
             map.put("url", esc(p.getUrl()));
-            map.put("ga", p.getGroup() + ":" + p.getLastUrlPart());
             DataList list2 = map.list("tags");
             for (Tag tag : p.getTags(sv, full ? 0 : MAX_TAGS)) {
 				DataMap map2 = list2.add();
 				map2.put("tag", esc(tag.getTag()));
 				map2.put("built", tag.isBuilt());
-            }
+				List<File> folders = sv.getFolders(p);
+				String implementation = "";
+				String a = "implementation '" + p.getGroup() + ":", b = ":" + tag.getTag() + "'";
+				if (folders != null && !folders.isEmpty()) {
+					implementation = folders.stream().map(file -> a + file.getName() + b)
+							.collect(Collectors.joining("\n"));
+				} else {
+					implementation = a + p.getLastUrlPart() + b;
+				}
+				map2.put("implementation", esc(implementation));
+			}
             map.put("empty", list2.isEmpty());
         }
     }

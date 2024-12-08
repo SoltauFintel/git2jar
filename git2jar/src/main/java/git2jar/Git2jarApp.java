@@ -58,6 +58,7 @@ public class Git2jarApp {
             .build()
             .boot();
         System.out.println("==== web mode ====");
+        // TODO work-jobs-dir clearen
     }
     
     private static class WebRoutes extends RouteDefinitions {

@@ -15,7 +15,7 @@ public class JobStatusPage extends Page {
 			log = esc(job.getBuildResult().getLog());
 		}
 		
-		put("title", "Building " + job.getProject().getLastUrlPart());
+		put("title", esc("Building " + job.getProject().getLastUrlPart() + " " + job.getTag()));
 		put("jobId", esc(job.getJobId()));
 		put("url", esc(job.getProject().getUrl()));
 		put("tag", esc(job.getTag()));

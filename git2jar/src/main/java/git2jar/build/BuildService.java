@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import org.pmw.tinylog.Logger;
 
+import com.github.dockerjava.api.exception.NotFoundException;
 import com.google.common.io.Files;
 
 import git2jar.base.Config;
@@ -25,9 +26,21 @@ public class BuildService {
 		AbstractDocker docker = AbstractDocker.get();
 		long start = System.currentTimeMillis();
 		docker.pull(image);
+		BuildResult ret;
+		try {
 		
-		BuildResult ret = docker.run(image, dir, "/work");
+			ret = docker.run(image, dir, "/work");
 		
+		} catch (NotFoundException e) {
+			Logger.warn("Image '" + image + "' not found. Creating it...");
+			buildImage(docker, image);
+			ret = docker.run(image, dir, "/work");
+		} catch (Exception e) {
+			Logger.error(e);
+			ret = new BuildResult();
+			ret.setLog(e.getClass().getName() + ": " + e.getMessage());
+			return ret;
+		}
 		long end = System.currentTimeMillis();
 		Logger.info("container #" + ret.getId() + " log:\n" + ret.getLog());
 		
@@ -48,6 +61,10 @@ public class BuildService {
 		ret.setSuccess(ret.getLog() != null && ret.getLog().contains("BUILD SUCCESSFUL"));
 		ret.setLog(ret.getLog() + "\nOutput files:\n" + sb.toString());
 		return ret;
+	}
+	
+	private void buildImage(AbstractDocker docker, String image) {
+		// TODO Baustelle
 	}
 
 	private void copyOutputFilesToRepository(File dir, StringBuilder sb) {
@@ -79,10 +96,12 @@ public class BuildService {
 
 	private String getCommand(Job job) {
 		Project p = job.getProject();
-		String lp = p.getLastUrlPart();
 		String cmd1 = "git clone -b " + job.getTag() + " " + p.getUrl();
-		String cmd2 = p.getBuildCommand().replace("{tag}", job.getTag());
-		String cmd = cmd1 + " && cd " + lp + "/" + lp + " && " + cmd2 + " && mkdir /work/output"
+		String cmd3 = p.getBuildCommand()
+				.replace("{group}", p.getGroup())
+				.replace("{tag}", job.getTag());
+		String dir = p.getLastUrlPart() + (p.getDir().isEmpty() ? "" : "/" + p.getDir());
+		String cmd = cmd1 + " && cd " + dir + " && " + cmd3 + " && mkdir /work/output"
 				+ " && cp -R ~/.m2/repository /work/output";
 		Logger.info("SCRIPT: " + cmd);
 		return cmd;

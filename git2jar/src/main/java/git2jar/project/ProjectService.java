@@ -93,26 +93,81 @@ public class ProjectService {
 			stream = stream.limit(limit);
 		}
 		File dir = getProjectFilesDir(p);
-		return stream.map(tag -> new Tag(tag.getTag(), new File(dir, tag.getTag()).exists())).toList();
+		return stream.map(tag -> new Tag(tag.getTag(), hasFile(p, dir, tag.getTag()))).toList();
     }
+    
+    private boolean hasFile(Project p, File dir, String tag) {
+		if (p.getDir().isEmpty()) {
+			File[] files = dir.listFiles();
+			if (files == null) {
+				return false;
+			}
+			int countValidFolders = 0, countVersionFolders = 0;
+			for (File file : files) {
+				if (!file.getName().startsWith(".") && file.isDirectory()) {
+					countValidFolders++;
+					if (new File(file, tag).isDirectory()) {
+						countVersionFolders++;
+					}
+				}
+			}
+			return countValidFolders > 0 && countValidFolders == countVersionFolders;
+		} else {
+			return new File(dir, tag).exists();
+		}
+	}
+    
+	public List<File> getFolders(Project p) {
+		if (p.getDir().isEmpty()) {
+			File dir = getProjectFilesDir(p);
+			File[] files = dir.listFiles();
+			if (files != null) {
+				List<File> ret = new ArrayList<>();
+				for (File file : files) {
+					if (!file.getName().startsWith(".") && file.isDirectory()) {
+						ret.add(file);
+					}
+				}
+				return ret;
+			}
+		}
+		return null;
+	}
     
     public File getProjectFilesDir(Project p) {
 		return new File(Config.config.getRepositoryDir().getAbsolutePath(), p.getGroupDir());
     }
 
-	public void deletePackage(String id, String tag) {
+	public boolean deletePackage(String id, String tag) {
+		boolean ret = false;
 		Project p = get(id);
-		File dir = new File(getProjectFilesDir(p), tag);
+		File dir = null;
+		if (p.getDir().isEmpty() && getFolders(p) != null) {
+			for (File file : getFolders(p)) {
+				if (del(new File(file, tag))) {
+					ret = true;
+				}
+				dir = file.getParentFile();
+			}
+		} else {
+			dir = new File(getProjectFilesDir(p), tag);
+			ret = del(dir);
+		}
+		if (dir != null && FileService.isDirEmpty(dir.getParentFile())) {
+			FileService.deleteDir(dir.getParentFile());
+			Logger.debug("deleted also now empty parent dir: " + dir.getParentFile().getAbsolutePath());
+		}
+		clearCache();
+		return ret;
+	}
+
+	private boolean del(File dir) {
 		if (dir.isDirectory()) {
 			FileService.deleteDir(dir);
 			Logger.debug("deleted dir: " + dir.getAbsolutePath());
-			
-			if (FileService.isDirEmpty(dir.getParentFile())) {
-				FileService.deleteDir(dir.getParentFile());
-				Logger.debug("deleted also now empty parent dir: " + dir.getParentFile().getAbsolutePath());
-			}
+			return true;
 		}
-		clearCache();
+		return false;
 	}
 
     private File file() {

@@ -111,6 +111,13 @@ public abstract class AbstractDocker {
             Logger.error(e, "Error deleting container: " + container);
         }
     }
+    
+    public void buildImage() {
+    	// TODO Baustelle
+//    	docker.buildImageCmd()
+//    		.withDockerfile()
+//    		.exec();
+    }
 
 	public long getTimeout() {
 		return timeout;

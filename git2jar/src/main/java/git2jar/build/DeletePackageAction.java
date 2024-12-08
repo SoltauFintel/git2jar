@@ -12,8 +12,9 @@ public class DeletePackageAction extends Action {
 		String id = ctx.pathParam("id");
 		String tag = ctx.pathParam("tag");
 		
-		new ProjectService().deletePackage(id, tag);
-		Logger.info("package deleted: #" + id + ", tag " + tag);
+		if (new ProjectService().deletePackage(id, tag)) {
+			Logger.info("package deleted: #" + id + ", tag " + tag);
+		}
 		
 		ctx.redirect("/");
 	}

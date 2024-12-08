@@ -30,7 +30,7 @@
                     {{if tag.built}}
 						<table style="width: 100%;">
 							<tr>
-								<td style="width: 100%;"><pre class="ml3{{if not deleteAllowed}} mr4{{/if}}">implementation '{{p.ga}}:{{tag.tag}}'</pre></td>
+								<td style="width: 100%;"><pre class="ml3{{if not deleteAllowed}} mr4{{/if}}">{{tag.implementation}}</pre></td>
 								{{if deleteAllowed}}
 									<td>
 										<p class="ml2 mr4"><a onclick="return confirm('Delete?');" href="/project/{{p.id}}/{{tag.tag}}/delete"

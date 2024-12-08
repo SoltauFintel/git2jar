@@ -64,6 +64,14 @@ public class Project {
 	}
 
 	public String getGroup() {
+		String ret = getRawGroup();
+		if (!ret.isEmpty() && dir.isEmpty()) {
+			ret += "." + getLastUrlPart();
+		}
+		return ret.toLowerCase();
+	}
+
+	public String getRawGroup() {
 		if (url == null) {
 			return "";
 		}
@@ -89,9 +97,9 @@ public class Project {
 		ret += "." + url.substring(oo + 1, ooo);
 		return ret.toLowerCase();
 	}
-	
+
 	public String getGroupDir() {
-		return getGroup().replace(".", "/") + "/" + getLastUrlPart();
+		return getRawGroup().replace(".", "/") + "/" + getLastUrlPart();
 	}
 
 	public List<Tag> getTags(ProjectService sv, int limit) {
