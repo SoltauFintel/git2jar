@@ -7,8 +7,6 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.pmw.tinylog.Logger;
 
-import git2jar.build.User;
-
 /**
  * Access Git repository
  */

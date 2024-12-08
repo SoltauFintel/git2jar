@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import git2jar.build.User;
-
 public class Project {
 	private String id;
 	// TODO UserId (Owner)

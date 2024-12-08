@@ -1,4 +1,4 @@
-package git2jar.build;
+package git2jar.project;
 
 public class User {
     private String login;
