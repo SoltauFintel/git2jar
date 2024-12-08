@@ -1,6 +1,6 @@
 package git2jar.project;
 
-import git2jar.build.BuildPage;
+import git2jar.build.JobStatusPage;
 import git2jar.build.ClearDoneJobsAction;
 import git2jar.build.CreateJobAction;
 import git2jar.build.DeletePackageAction;
@@ -24,7 +24,7 @@ public class Web extends RouteDefinitions {
         get("/project", ProjectsPage.class);
         
         get("/project/:id/:tag/build", CreateJobAction.class);
-        get("/job/:jobId", BuildPage.class);
+        get("/job/:jobId", JobStatusPage.class);
         get("/project/:id/:tag/delete", DeletePackageAction.class);
     }
 }

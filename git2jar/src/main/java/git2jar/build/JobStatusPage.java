@@ -3,7 +3,7 @@ package git2jar.build;
 import git2jar.build.Job.JobStatus;
 import github.soltaufintel.amalia.web.action.Page;
 
-public class BuildPage extends Page {
+public class JobStatusPage extends Page {
 
 	@Override
 	protected void execute() {
