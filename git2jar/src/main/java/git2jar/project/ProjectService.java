@@ -113,6 +113,7 @@ public class ProjectService {
 				Logger.debug("deleted also now empty parent dir: " + dir.getParentFile().getAbsolutePath());
 			}
 		}
+		clearCache();
 	}
 
     private File file() {

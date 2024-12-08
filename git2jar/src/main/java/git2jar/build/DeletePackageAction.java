@@ -14,7 +14,6 @@ public class DeletePackageAction extends Action {
 		
 		new ProjectService().deletePackage(id, tag);
 		Logger.info("package deleted: #" + id + ", tag " + tag);
-		new ProjectService().clearCache();
 		
 		ctx.redirect("/");
 	}
