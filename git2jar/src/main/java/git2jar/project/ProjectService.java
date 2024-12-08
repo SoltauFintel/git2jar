@@ -73,9 +73,18 @@ public class ProjectService {
     public void delete(String id) {
         synchronized (HANDLE) {
             list();
-            if (_projects.getProjects().removeIf(i -> i.getId().equals(id))) {
-                save();
-            }
+			if (_projects.getProjects().removeIf(project -> {
+				boolean delete = project.getId().equals(id);
+				if (delete) {
+					File dir = new File(Config.config.getTagsWorkDir(), project.getLastUrlPart());
+					if (dir.isDirectory()) {
+						FileService.deleteDir(dir);
+					}
+				}
+				return delete;
+			})) {
+				save();
+			}
         }
     }
     
