@@ -86,7 +86,7 @@ public class ProjectService {
     	if (workspace.isDirectory()) {
     		git.fetch(p.getUser());
     	} else {
-    		git.clone(p.getUrl(), p.getUser(), "master", true);
+    		git.clone(p.getUrl(), p.getUser(), p.getBranch(), true);
     	}
 		Stream<Tag> stream = git.getTags().stream().map(tag -> new Tag(tag, false))
 				.sorted((a, b) -> b.sort().compareTo(a.sort()));

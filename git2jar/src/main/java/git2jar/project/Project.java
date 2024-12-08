@@ -17,7 +17,7 @@ public class Project {
 	private String dir;
 	/** Gradle build command */
 	private String buildCommand;
-	private String masterBranch = "master";
+	private String branch = "master";
 	private transient Map<String, List<Tag>> tags = new HashMap<>();
 
 	public String getId() {
@@ -109,11 +109,11 @@ public class Project {
 		tags.clear();
 	}
 
-	public String getMasterBranch() {
-		return masterBranch;
+	public String getBranch() {
+		return branch;
 	}
 
-	public void setMasterBranch(String masterBranch) {
-		this.masterBranch = masterBranch;
+	public void setBranch(String branch) {
+		this.branch = branch;
 	}
 }

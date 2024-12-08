@@ -125,7 +125,10 @@ public class BuildService {
 	private String getCommand(Job job) {
 		Project p = job.getProject();
 		String lp = p.getLastUrlPart();
+		
 		String cmd1 = "git clone " + p.getUrl();
+		// TODO tag wählen!
+		
 		String cmd2 = p.getBuildCommand().replace("{tag}", job.getTag());
 		String cmd = cmd1 + " && cd " + lp + "/" + lp + " && " + cmd2 + " && mkdir /work/output"
 				+ " && cp -R ~/.m2/repository /work/output";

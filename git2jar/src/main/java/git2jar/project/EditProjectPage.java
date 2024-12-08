@@ -16,6 +16,7 @@ public class EditProjectPage extends Page {
             p.setDir(ctx.formParam("dir"));
             p.getUser().setLogin(ctx.formParam("login"));
             p.getUser().setPassword(ctx.formParam("password"));
+            p.setBranch(ctx.formParam("branch"));
             sv.save(p);
             ctx.redirect("/project");
         } else {
@@ -26,6 +27,7 @@ public class EditProjectPage extends Page {
             put("dir", esc(p.getDir()));
             put("login", esc(p.getUser().getLogin()));
             put("password", esc(p.getUser().getPassword()));
+            put("branch", esc(p.getBranch()));
         }
     }
 }
