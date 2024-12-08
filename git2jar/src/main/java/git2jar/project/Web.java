@@ -2,6 +2,7 @@ package git2jar.project;
 
 import git2jar.build.BuildPage;
 import git2jar.build.ClearDoneJobsAction;
+import git2jar.build.CreateJobAction;
 import git2jar.build.DeletePackageAction;
 import github.soltaufintel.amalia.web.route.RouteDefinitions;
 
@@ -22,7 +23,8 @@ public class Web extends RouteDefinitions {
         form("/project/:id", EditProjectPage.class);
         get("/project", ProjectsPage.class);
         
-        get("/project/:id/:tag/build", BuildPage.class);
+        get("/project/:id/:tag/build", CreateJobAction.class);
+        get("/job/:jobId", BuildPage.class);
         get("/project/:id/:tag/delete", DeletePackageAction.class);
     }
 }

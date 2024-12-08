@@ -22,31 +22,28 @@ public class BuildService {
 	public static final List<Job> jobs = new ArrayList<>();
 
 	/**
-	 * Get job or creates job if it does not exist
 	 * @param id project ID
 	 * @param tag version
-	 * @return Job
+	 * @return Job ID
 	 */
-	public Job getStatus(String id, String tag) {
+	public String createJob(String id, String tag) {
 		synchronized (HANDLE) {
-			Job ret = jobs.stream().filter(job -> job.getProject().getId().equals(id) && job.getTag().equals(tag)).findFirst().orElse(null);
-			if (ret == null) {
-				Logger.info("Job #" + id + ", " + tag + " not found -> create new job! Jobs: " + jobs.size());
-				ret = createJob(id, tag);
-			}
-			return ret;
+	    	Project project = new ProjectService().get(id);
+	    	Job job = new Job(project, tag);
+	    	String jobId = job.getJobId();
+	    	jobs.add(job);
+			Logger.info("Job #" + jobId + " created. " + project.getUrl() + ", " + tag);
+	    	startNextJob();
+			return jobId;
 		}
 	}
 	
-    private Job createJob(String id, String tag) {
-    	Project p = new ProjectService().get(id);
-    	Job job = new Job(p, tag);
-    	jobs.add(job);
-    	Logger.info("Job created. " + p.getUrl() + ", " + tag);
-    	startNextJob();
-		return job;
+	public Job getJob(String jobId) {
+		synchronized (HANDLE) {
+			return jobs.stream().filter(job -> job.getJobId().equals(jobId)).findFirst().orElse(null);
+		}
 	}
-
+	
 	public static void startNextJob() {
 		Optional<Job> next = BuildService.jobs.stream().filter(j -> j.getStatus() == JobStatus.WAITING).findFirst();
 		if (next.isPresent()) {

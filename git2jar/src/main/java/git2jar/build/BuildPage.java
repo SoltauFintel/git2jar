@@ -7,10 +7,9 @@ public class BuildPage extends Page {
 
 	@Override
 	protected void execute() {
-		String id = ctx.pathParam("id");
-		String tag = ctx.pathParam("tag");
+		String jobId = ctx.pathParam("jobId");
 
-		Job job = new BuildService().getStatus(id, tag);
+		Job job = new BuildService().getJob(jobId);
 		String log = "";
 		if (job.getBuildResult() != null) {
 			log = esc(job.getBuildResult().getLog());
