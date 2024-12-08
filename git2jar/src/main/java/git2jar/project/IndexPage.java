@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.pmw.tinylog.Logger;
+
 import com.github.template72.data.DataList;
 import com.github.template72.data.DataMap;
 
@@ -28,7 +30,14 @@ public class IndexPage extends Page {
             map.put("id", esc(p.getId()));
             map.put("url", esc(p.getUrl()));
             DataList list2 = map.list("tags");
-            for (Tag tag : p.getTags(sv, full ? 0 : MAX_TAGS)) {
+            List<Tag> tags;
+			try {
+				tags = p.getTags(sv, full ? 0 : MAX_TAGS);
+			} catch (Exception e) {
+				Logger.error(e);
+				tags = List.of();
+			}
+			for (Tag tag : tags) {
 				DataMap map2 = list2.add();
 				map2.put("tag", esc(tag.getTag()));
 				map2.put("built", tag.isBuilt());
