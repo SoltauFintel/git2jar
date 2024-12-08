@@ -104,7 +104,7 @@ public class BuildService {
 					String name = file.getAbsolutePath().replace("\\", "/");
 					int o = name.indexOf("repository/");
 					name = name.substring(o + "repository/".length());
-					File target = new File(Config.config.getFilesDir(), name);
+					File target = new File(Config.config.getRepositoryDir(), name);
 					target.getParentFile().mkdirs();
 					try {
 						Files.copy(file, target);

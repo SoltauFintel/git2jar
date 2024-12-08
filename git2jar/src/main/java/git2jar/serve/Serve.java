@@ -12,9 +12,9 @@ import spark.Spark;
 public class Serve extends RouteDefinitions {
     
     private void init2() {
-        File dir = Config.config.getFilesDir();
+        File dir = Config.config.getRepositoryDir();
         if (!dir.isDirectory()) {
-            Logger.error("files-dir does not exist: " + dir.getAbsolutePath());
+            Logger.error("Repository folder does not exist: " + dir.getAbsolutePath());
         }
     }
     

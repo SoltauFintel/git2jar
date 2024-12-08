@@ -23,7 +23,7 @@ public class FileRoute implements Route {
         } else if (path == null || path.contains("..") || path.replace("\\", "/").contains("//")/* ~UNC */) {
             Logger.error(p + "Illegal path: " + path);
         } else {
-            File file = new File(Config.config.getFilesDir(), path);
+            File file = new File(Config.config.getRepositoryDir(), path);
             if (file.isFile()) {
                 try {
                     if ("HEAD".equalsIgnoreCase(req.requestMethod())) {

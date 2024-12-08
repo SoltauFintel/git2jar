@@ -9,50 +9,46 @@ import github.soltaufintel.amalia.web.config.AppConfig;
 public class Config {
     public static Config config;
 
-    /** Das basedir enthält die weiteren Ordner. */
+    /** base folder containing the other folders */
     private final String basedir;
-    /** Im filesdir sind die Artefakte. */
-    private final String filesdir;
-    /** Im workdir sind die Workspaces (Git, Build). */
-    private final String workdir;
-    /** Im datadir sind die Projekte. */
-    private final String datadir;
+    /** folder containing artifacts */
+    private final File repository;
+    /** work directory */
+    private final File work;
+    /** folder containing projects data */
+    private final File projects;
+    /** name of Docker image */
+    private final String image;
     
     public Config(AppConfig c) {
         basedir = c.get("basedir");
         if (basedir == null || basedir.isEmpty()) {
             throw new RuntimeException("Missing config property 'basedir'!");
         }
-        filesdir = c.get("files", "files");
-        workdir = c.get("workdir", "workdir");
-        datadir = c.get("datadir", "data");
         Logger.debug("Config basedir: " + basedir);
-        getWorkdir().mkdirs();
-        getFilesDir().mkdirs();
-        getDataDir().mkdirs();
+        repository = new File(basedir, c.get("repository", "repository"));
+        work = new File(basedir, c.get("work", "work"));
+        projects = new File(basedir, c.get("projects", "projects"));
+        image = c.get("image", "git2jar-jdk17");
     }
     
-    private File getWorkdir() {
-        return new File(basedir, workdir);
-    }
-
     public File getTagsWorkDir() {
-    	return new File(getWorkdir(), "tags");
+		return new File(work, "tags");
     }
 
     public File getJobsWorkDir() {
-    	return new File(getWorkdir(), "jobs");
+    	return new File(work, "jobs");
     }
 
-    public File getFilesDir() {
-        return new File(basedir, filesdir);
+    public File getRepositoryDir() {
+        return repository;
     }
     
-    public File getDataDir() {
-        return new File(basedir, datadir);
+    public File getProjectsDir() {
+        return projects;
     }
     
     public String getImage() {
-    	return "git2jar-jdk17"; // TODO
+    	return image;
     }
 }

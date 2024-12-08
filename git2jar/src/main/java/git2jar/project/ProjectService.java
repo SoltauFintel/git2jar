@@ -93,12 +93,12 @@ public class ProjectService {
 		if (limit > 0) {
 			stream = stream.limit(limit);
 		}
-		String dir = getProjectFilesDir(p) + "/";
-		return stream.map(tag -> new Tag(tag.getTag(), new File(dir + tag.getTag()).exists())).toList();
+		File dir = getProjectFilesDir(p);
+		return stream.map(tag -> new Tag(tag.getTag(), new File(dir, tag.getTag()).exists())).toList();
     }
     
-    public String getProjectFilesDir(Project p) {
-		return (Config.config.getFilesDir() + "/" + p.getGroupDir()).replace("\\", "/");
+    public File getProjectFilesDir(Project p) {
+		return new File(Config.config.getRepositoryDir().getAbsolutePath(), p.getGroupDir());
     }
 
 	public void deletePackage(String id, String tag) {
@@ -116,7 +116,7 @@ public class ProjectService {
 	}
 
     private File file() {
-        return new File(Config.config.getDataDir(), "projects.json");
+        return new File(Config.config.getProjectsDir(), "projects.json");
     }
     
     public static class Projects {
