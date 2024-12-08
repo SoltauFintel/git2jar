@@ -1,4 +1,4 @@
-package git2jar.docker;
+package git2jar.build;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -19,7 +19,6 @@ import com.github.dockerjava.api.model.Info;
 import com.github.dockerjava.api.model.Volume;
 
 import git2jar.base.ShellScriptExecutor;
-import git2jar.build.BuildResult;
 
 public abstract class AbstractDocker {
     private final DockerClient docker;

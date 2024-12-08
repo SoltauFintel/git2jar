@@ -9,7 +9,6 @@ import org.pmw.tinylog.Logger;
 
 import git2jar.base.Config;
 import git2jar.base.FileService;
-import git2jar.build.GitService;
 import github.soltaufintel.amalia.base.IdGenerator;
 
 public class ProjectService {

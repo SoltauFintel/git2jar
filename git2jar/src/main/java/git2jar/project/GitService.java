@@ -1,4 +1,4 @@
-package git2jar.build;
+package git2jar.project;
 
 import java.io.File;
 import java.util.List;
@@ -6,6 +6,8 @@ import java.util.List;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.pmw.tinylog.Logger;
+
+import git2jar.build.User;
 
 /**
  * Access Git repository

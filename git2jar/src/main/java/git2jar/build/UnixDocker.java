@@ -1,4 +1,4 @@
-package git2jar.docker;
+package git2jar.build;
 
 import org.pmw.tinylog.Logger;
 
