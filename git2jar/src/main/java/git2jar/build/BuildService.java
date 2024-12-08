@@ -12,19 +12,14 @@ import com.google.common.io.Files;
 
 import git2jar.base.Config;
 import git2jar.base.FileService;
-import git2jar.base.ShellScriptExecutor;
 import git2jar.build.Job.JobStatus;
 import git2jar.docker.AbstractDocker;
-import git2jar.docker.UnixDocker;
-import git2jar.docker.WindowsDocker;
 import git2jar.project.Project;
 import git2jar.project.ProjectService;
 
 public class BuildService {
 	private static final String HANDLE = "HANDLE_BS";
 	public static final List<Job> jobs = new ArrayList<>();
-    // TODO Build soll in einem extra Container laufen, der nur während des Builds existiert.
-    // TODO Ergebnisdateien dem serve-Programm zur Verfügung stellen
 
 	/**
 	 * Get job or creates job if it does not exist
@@ -36,7 +31,7 @@ public class BuildService {
 		synchronized (HANDLE) {
 			Job ret = jobs.stream().filter(job -> job.getProject().getId().equals(id) && job.getTag().equals(tag)).findFirst().orElse(null);
 			if (ret == null) {
-				Logger.info("Job #" + id + ", " + tag + " not found -> create new job! " + jobs.size());
+				Logger.info("Job #" + id + ", " + tag + " not found -> create new job! Jobs: " + jobs.size());
 				ret = createJob(id, tag);
 			}
 			return ret;
@@ -67,7 +62,7 @@ public class BuildService {
 		String cmd = getCommand(job);
 		String image = Config.config.getImage();
 		FileService.savePlainTextFile(new File(dir, "SCRIPT"), cmd);
-		AbstractDocker docker = docker();
+		AbstractDocker docker = AbstractDocker.get();
 		long start = System.currentTimeMillis();
 		docker.pull(image);
 		
@@ -80,7 +75,7 @@ public class BuildService {
 		File output = new File(dir, "output");
 		StringBuilder sb = new StringBuilder();
 		if (output.isDirectory()) {
-			list(output, sb);
+			copyOutputFilesToRepository(output, sb);
 		} else {
 			Logger.error("Output dir does not exist: " + output.getAbsolutePath());
 		}
@@ -95,7 +90,7 @@ public class BuildService {
 		return ret;
 	}
 
-	private void list(File dir, StringBuilder sb) {
+	private void copyOutputFilesToRepository(File dir, StringBuilder sb) {
 		File[] files = dir.listFiles();
 		if (files != null) {
 			for (File file : files) {
@@ -116,7 +111,7 @@ public class BuildService {
 			}
 			for (File file : files) {
 				if (file.isDirectory()) {
-					list(file, sb); // recursive
+					copyOutputFilesToRepository(file, sb); // recursive
 				}
 			}
 		}
@@ -131,16 +126,6 @@ public class BuildService {
 				+ " && cp -R ~/.m2/repository /work/output";
 		Logger.info("SCRIPT: " + cmd);
 		return cmd;
-	}
-
-	private AbstractDocker docker() {
-		AbstractDocker docker;
-		if (ShellScriptExecutor.isWindows()) {
-			docker = new WindowsDocker();
-		} else {
-			docker = new UnixDocker();
-		}
-		return docker;
 	}
 	
 	public void clearDoneJobs() {

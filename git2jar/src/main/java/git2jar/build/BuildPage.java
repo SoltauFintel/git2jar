@@ -11,14 +11,18 @@ public class BuildPage extends Page {
 		String tag = ctx.pathParam("tag");
 
 		Job job = new BuildService().getStatus(id, tag);
+		String log = "";
+		if (job.getBuildResult() != null) {
+			log = esc(job.getBuildResult().getLog());
+		}
 		
 		put("title", "Building " + job.getProject().getLastUrlPart());
 		put("jobId", esc(job.getJobId()));
 		put("url", esc(job.getProject().getUrl()));
 		put("tag", esc(job.getTag()));
 		put("status", esc(job.getStatus().name()));
-		String log = job.getBuildResult() == null ? "" : esc(job.getBuildResult().getLog());
-		put("log", log.isEmpty() && !job.getStatus().equals(JobStatus.FINISHED) ? "(no log available yet)" : log);
+		put("log", log);
+		put("hasLog", !log.isBlank());
 		put("success", job.getBuildResult() == null ? false : job.getBuildResult().isSuccess());
 		put("finished", job.getStatus().equals(JobStatus.FINISHED));
 		put("duration", job.getBuildResult() != null && job.getBuildResult().getDuration() > 0 && job.getStatus().equals(JobStatus.FINISHED)

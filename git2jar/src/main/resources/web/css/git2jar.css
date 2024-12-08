@@ -34,3 +34,8 @@
 .error {
 	color: #c00;
 }
+
+.success {
+	color: #0c0;
+	font-weight: bold;
+}

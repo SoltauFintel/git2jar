@@ -18,6 +18,7 @@ import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.Info;
 import com.github.dockerjava.api.model.Volume;
 
+import git2jar.base.ShellScriptExecutor;
 import git2jar.build.BuildResult;
 
 public abstract class AbstractDocker {
@@ -117,5 +118,15 @@ public abstract class AbstractDocker {
 	 */
 	public void setTimeout(long timeout) {
 		this.timeout = timeout;
+	}
+
+	public static AbstractDocker get() {
+		AbstractDocker docker;
+		if (ShellScriptExecutor.isWindows()) {
+			docker = new WindowsDocker();
+		} else {
+			docker = new UnixDocker();
+		}
+		return docker;
 	}
 }

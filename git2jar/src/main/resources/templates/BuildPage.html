@@ -7,9 +7,14 @@
 		<h3>{{url}}</h3>
 		<p>tag: {{tag}}</p>
 		<p>Status: {{status}} | Job ID: {{jobId}}</p>
-		<p style="font-size: 14pt;">{{if success}}<span style="color: #0c0; font-weight: bold;">SUCCESS</span>{{else if finished}}<span
-			class="error">Job failed</span>{{else}}Job is running...{{/if}}</p>
-		<pre>{{log}}</pre>
+		<p style="font-size: 14pt;">
+			{{if success}}<span class="success">SUCCESS</span>
+			{{else if finished}}<span class="error">Job failed</span>
+			{{else}}Job is running...{{/if}}
+		</p>
+		{{if hasLog}}
+			<pre>{{log}}</pre>
+		{{/if}}
 		<p>{{duration}}</p>
 	</div>
 </div>
