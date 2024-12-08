@@ -1,12 +1,10 @@
 package git2jar.project;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.eclipse.jgit.util.FileUtils;
 import org.pmw.tinylog.Logger;
 
 import git2jar.base.Config;
@@ -83,7 +81,7 @@ public class ProjectService {
     }
     
     public List<Tag> getTags(Project p, int limit) {
-    	File workspace = new File(Config.config.getTagsWorkDir(), "tags/" + p.getLastUrlPart());
+    	File workspace = new File(Config.config.getTagsWorkDir(), p.getLastUrlPart());
     	GitService git = new GitService(workspace);
     	if (workspace.isDirectory()) {
     		git.fetch(p.getUser());
@@ -107,16 +105,12 @@ public class ProjectService {
 		Project p = get(id);
 		File dir = new File(getProjectFilesDir(p), tag);
 		if (dir.isDirectory()) {
-			try {
-				FileUtils.delete(dir, FileUtils.RECURSIVE);
-				Logger.debug("deleted dir: " + dir.getAbsolutePath());
-				File[] files = dir.getParentFile().listFiles();
-				if (files != null && files.length == 0) {
-					FileUtils.delete(dir.getParentFile(), FileUtils.RECURSIVE);
-					Logger.debug("deleted also now empty parent dir: " + dir.getParentFile().getAbsolutePath());
-				}
-			} catch (IOException e) {
-				throw new RuntimeException("Error deleting package: " + dir.getAbsolutePath(), e);
+			FileService.deleteDir(dir);
+			Logger.debug("deleted dir: " + dir.getAbsolutePath());
+			
+			if (FileService.isDirEmpty(dir.getParentFile())) {
+				FileService.deleteDir(dir.getParentFile());
+				Logger.debug("deleted also now empty parent dir: " + dir.getParentFile().getAbsolutePath());
 			}
 		}
 	}

@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import org.eclipse.jgit.util.FileUtils;
 import org.pmw.tinylog.Logger;
 
 import com.google.gson.Gson;
@@ -67,5 +68,18 @@ public class FileService {
             Logger.error(e);
             return json;
         }
+    }
+    
+    public static boolean isDirEmpty(File dir) {
+		File[] files = dir.listFiles();
+		return files != null && files.length == 0;
+    }
+    
+    public static void deleteDir(File dir) {
+    	try {
+			FileUtils.delete(dir, FileUtils.RECURSIVE);
+		} catch (IOException e) {
+			throw new RuntimeException("Error deleting directory " + dir.getAbsolutePath());
+		}
     }
 }
