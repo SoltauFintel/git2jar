@@ -6,6 +6,7 @@ import org.pmw.tinylog.Level;
 import org.pmw.tinylog.Logger;
 
 import git2jar.base.Config;
+import git2jar.base.FileService;
 import git2jar.build.DeletePackageAction;
 import git2jar.job.ClearDoneJobsAction;
 import git2jar.job.CreateJobAction;
@@ -58,7 +59,7 @@ public class Git2jarApp {
             .build()
             .boot();
         System.out.println("==== web mode ====");
-        // TODO work-jobs-dir clearen
+        FileService.deleteDir(Config.config.getJobsWorkDir());
     }
     
     private static class WebRoutes extends RouteDefinitions {
