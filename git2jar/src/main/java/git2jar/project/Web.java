@@ -1,14 +1,8 @@
-package git2jar.web;
+package git2jar.project;
 
 import git2jar.build.BuildPage;
 import git2jar.build.ClearDoneJobsAction;
 import git2jar.build.DeletePackageAction;
-import git2jar.project.AddProjectPage;
-import git2jar.project.DeleteProjectAction;
-import git2jar.project.EditProjectPage;
-import git2jar.project.IndexPage;
-import git2jar.project.ProjectsPage;
-import git2jar.project.ReloadProjectsAction;
 import github.soltaufintel.amalia.web.route.RouteDefinitions;
 
 /**

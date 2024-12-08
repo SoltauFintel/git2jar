@@ -1,13 +1,10 @@
 package git2jar;
 
-import org.pmw.tinylog.Configurator;
 import org.pmw.tinylog.Level;
-import org.pmw.tinylog.writers.ConsoleWriter;
 
 import git2jar.config.Config;
-import git2jar.project.Testmode;
+import git2jar.project.Web;
 import git2jar.serve.Serve;
-import git2jar.web.Web;
 import github.soltaufintel.amalia.auth.simple.SimpleAuth;
 import github.soltaufintel.amalia.web.builder.LoggingInitializer;
 import github.soltaufintel.amalia.web.builder.WebAppBuilder;
@@ -27,30 +24,11 @@ public class Git2jarApp {
         // protected webapp for building.
         if ("SERVE".equalsIgnoreCase(mode)) {
             serve();
-        } else if ("TEST".equalsIgnoreCase(mode)) {
-            testmode();
         } else if ("WEB".equalsIgnoreCase(mode)) {
             runWeb();
         } else {
-            System.err.println("unsupported env var MODE: " + mode);
+            System.err.println("Please set env var MODE to 'SERVE' or 'WEB'. Unsupported mode: " + mode);
         }
-    }
-
-    private static void testmode() {
-        Config.config = new Config(new AppConfig());
-        Configurator.currentConfig()
-            .writer(new ConsoleWriter())
-            .formatPattern("{date} {level}  {message}")
-            .level(Level.DEBUG)
-            .activate();
-
-        System.out.println("==== test mode ====");
-        System.out.println("- env vars: " + System.getenv().keySet());
-        System.out.println("- user home: " + System.getProperty("user.home"));
-        
-        new Testmode().run();
-        
-        System.out.println("End of test mode.");
     }
 
     private static void runWeb() {
