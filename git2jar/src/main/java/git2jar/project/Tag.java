@@ -4,14 +4,10 @@ import java.util.Objects;
 
 import git2jar.build.VersionNumber;
 
-public class Tag implements Comparable<Tag> {
+public class Tag {
     private String tag;
     private boolean built;
     private String sort;
-
-    public Tag() {
-        this("", false);
-    }
 
     public Tag(String tag, boolean built) {
         setTag(tag);
@@ -52,11 +48,6 @@ public class Tag implements Comparable<Tag> {
         return Objects.equals(tag, other.tag);
     }
 
-    @Override
-    public int compareTo(Tag o) {
-        return o.sort.compareTo(sort);
-    }
-    
     public String sort() {
     	return sort;
     }
