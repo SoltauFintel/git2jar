@@ -21,7 +21,7 @@ public class BuildPage extends Page {
 		put("log", log.isEmpty() && !job.getStatus().equals(JobStatus.FINISHED) ? "(no log available yet)" : log);
 		put("success", job.getBuildResult() == null ? false : job.getBuildResult().isSuccess());
 		put("finished", job.getStatus().equals(JobStatus.FINISHED));
-		put("duration", job.getBuildResult().getDuration() > 0 && job.getStatus().equals(JobStatus.FINISHED)
+		put("duration", job.getBuildResult() != null && job.getBuildResult().getDuration() > 0 && job.getStatus().equals(JobStatus.FINISHED)
 				? (job.getBuildResult().getDuration() + "ms") : "");
 	}
 }

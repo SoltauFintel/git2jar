@@ -12,15 +12,11 @@ import spark.Response;
 import spark.Route;
 
 public class FileRoute implements Route {
-    private final boolean head;
-
-    public FileRoute(boolean head) {
-        this.head = head;
-    }
-
+    // TODO Man könnte die file usage dauerhaft speichern. Ziel: rausfinden was weg kann
+	
     @Override
     public Object handle(Request req, Response res) throws Exception {
-        String p = req.ip() + " | ";
+        String p = req.ip() + " | " + req.requestMethod() + " | ";
         String path = req.pathInfo();
         if ("/".equals(path)) {
             return "git2jar " + Git2jarApp.VERSION;
@@ -30,11 +26,11 @@ public class FileRoute implements Route {
             File file = new File(Config.config.getFilesDir(), path);
             if (file.isFile()) {
                 try {
-                    if (head) {
-                        Logger.info(p + "HEAD: " + file.getAbsolutePath());
+                    if ("HEAD".equalsIgnoreCase(req.requestMethod())) {
+                        Logger.info(p + file.getAbsolutePath());
                         return "";
                     } else {
-                        Logger.info(p + "serve: " + file.getAbsolutePath());
+                        Logger.info(p + file.getAbsolutePath());
                         res.type("application/octet-stream");
                         return Files.readAllBytes(file.toPath());
                     }
@@ -48,5 +44,4 @@ public class FileRoute implements Route {
         res.status(404);
         return "File not found";
     }
-    // TODO Man könnte die file usage dauerhaft speichern. Ziel: rausfinden was weg kann
 }
