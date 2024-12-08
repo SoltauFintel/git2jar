@@ -4,7 +4,8 @@ app.name=git2jar
 
 base-dir=
 repository=repository
-work=work
+tags=tags
+jobs=jobs
 projects=projects
 
 user.salt=
