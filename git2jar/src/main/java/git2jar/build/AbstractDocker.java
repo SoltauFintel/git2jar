@@ -18,8 +18,6 @@ import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.Info;
 import com.github.dockerjava.api.model.Volume;
 
-import git2jar.base.ShellScriptExecutor;
-
 public abstract class AbstractDocker {
     private final DockerClient docker;
     private long timeout = 20;

@@ -1,4 +1,4 @@
-package git2jar.base;
+package git2jar.build;
 
 import java.io.File;
 import java.io.FileWriter;
