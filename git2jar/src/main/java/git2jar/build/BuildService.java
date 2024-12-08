@@ -65,17 +65,18 @@ public class BuildService {
 		dir.mkdirs();
 		Logger.info("Building job #" + job.getJobId() + " ... | dir: " + dir.getAbsolutePath());
 		String cmd = getCommand(job);
+		String image = Config.config.getImage();
 		FileService.savePlainTextFile(new File(dir, "script"), cmd);
 		AbstractDocker docker = docker();
 		long start = System.currentTimeMillis();
+		docker.pull(image);
 		
-		String log = docker.run(Config.config.getImage(), dir);
+		BuildResult ret = docker.run(image, dir, "/work");
 		
 		long end = System.currentTimeMillis();
-		Logger.info("container #" + docker.id + " log:\n" + log);
+		Logger.info("container #" + ret.getId() + " log:\n" + ret.getLog());
 		
 		// Ergebnisdateien holen
-		// C:\dev\2024\dat\git2jar-main\workdir\tags\lxvo3r\output\repository\com\github\soltaufintel\oh-html\0.3.1-a4
 		File output = new File(dir, "output");
 		StringBuilder sb = new StringBuilder();
 		if (output.isDirectory()) {
@@ -84,14 +85,13 @@ public class BuildService {
 			Logger.error("Output dir does not exist: " + output.getAbsolutePath());
 		}
 		
-		docker.rmf(docker.id);
+		docker.rmf(ret.getId());
 
 		new ProjectService().clearCache();
 		
-		BuildResult ret = new BuildResult();
 		ret.setDuration(end - start);
-		ret.setLog(log + "\nOutput files:\n" + sb.toString());
-		ret.setSuccess(log != null && log.contains("BUILD SUCCESSFUL"));
+		ret.setSuccess(ret.getLog() != null && ret.getLog().contains("BUILD SUCCESSFUL"));
+		ret.setLog(ret.getLog() + "\nOutput files:\n" + sb.toString());
 		return ret;
 	}
 
@@ -105,7 +105,6 @@ public class BuildService {
 					int o = name.indexOf("repository/");
 					name = name.substring(o + "repository/".length());
 					File target = new File(Config.config.getFilesDir(), name);
-					Logger.info(name); // XXX DEBUG
 					target.getParentFile().mkdirs();
 					try {
 						Files.copy(file, target);

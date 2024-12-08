@@ -1,11 +1,20 @@
 package git2jar.build;
 
 public class BuildResult {
+	private String id;
     private boolean success;
     private String log;
     private long duration;
     
-    public boolean isSuccess() {
+    public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public boolean isSuccess() {
         return success;
     }
 

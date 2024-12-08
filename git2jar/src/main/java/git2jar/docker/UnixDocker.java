@@ -11,9 +11,12 @@ import github.soltaufintel.amalia.web.config.AppConfig;
 
 public class UnixDocker extends AbstractDocker {
 	
-	@Override
-	protected DockerClient createClient() {
-		Logger.info("UnixDocker");
+	public UnixDocker() {
+		super(createClient());
+	}
+
+	private static DockerClient createClient() {
+		Logger.debug("UnixDocker");
 		DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
 				.withDockerHost("unix:///var/run/docker.sock")
 				.withApiVersion(getApiVersion())

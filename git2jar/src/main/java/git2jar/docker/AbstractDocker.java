@@ -18,18 +18,17 @@ import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.Info;
 import com.github.dockerjava.api.model.Volume;
 
+import git2jar.build.BuildResult;
+
 public abstract class AbstractDocker {
     private final DockerClient docker;
-    public String id;
+    private long timeout = 20;
     
-    public AbstractDocker() {
-        docker = createClient();
+    public AbstractDocker(DockerClient docker) {
+        this.docker = docker;
     }
     
-    protected abstract DockerClient createClient();
-    
-    // TODO brauch ich das?
-    void pull(String image) {
+    public void pull(String image) {
         try {
         	if (!image.contains(":")) {
         		image += ":latest";
@@ -43,43 +42,44 @@ public abstract class AbstractDocker {
         }
     }
 
-    // TODO etwaige git2jar Logik hier raus nehmen!
-    public String run(String image, File dir) {
+    public BuildResult run(String image, File hostDir, String containerDir) {
 		List<Bind> binds = new ArrayList<>();
-		binds.add(new Bind(dir.getAbsolutePath(), new Volume("/work"), AccessMode.rw));
+		binds.add(new Bind(hostDir.getAbsolutePath(), new Volume(containerDir), AccessMode.rw));
     	
-        id = docker.createContainerCmd(image)
+        String id = docker.createContainerCmd(image)
             .withHostConfig(new HostConfig().withBinds(binds))
             .exec().getId();
+        BuildResult ret = new BuildResult();
+        ret.setId(id);
 		Logger.info("created container with ID '" + id + "' from image '" + image + "'");
         
         docker.startContainerCmd(id).exec();
         Logger.info("Container started. Waiting for end...");
         
         // waiting for container end
+        long start = System.currentTimeMillis();
         Info in = docker.infoCmd().exec();
         while (in.getContainersRunning() > 0) {
         	try {
-				Thread.sleep(1000);
+				Thread.sleep(3000);
 			} catch (InterruptedException e) {
 			}
+        	long duration = (System.currentTimeMillis() - start) / 1000;
+			if (duration > timeout * 60) {
+				String log = "";
+				try {
+					log = logs(id); // retrieve logs
+				} catch (Exception ignore) {
+				}
+				ret.setLog("Timeout after " + duration + "s\n" + log);
+        		return ret;
+        	}
+        	
         	in = docker.infoCmd().exec();
         }
         Logger.info("Container ended.");
-        
-        // retrieve logs
-        String logs = "";
-        for (int i = 1; i <= 6; i++) {
-            try {
-                Thread.sleep(2 * 1000);
-            } catch (Exception e) {
-            }
-            logs = logs(id);
-            if (logs != null && !logs.isEmpty()) {
-                break;
-            }
-        }
-        return logs;
+        ret.setLog(logs(id)); // retrieve logs
+        return ret;
     }
     
     public String logs(String container) {
@@ -107,4 +107,15 @@ public abstract class AbstractDocker {
             Logger.error(e, "Error deleting container: " + container);
         }
     }
+
+	public long getTimeout() {
+		return timeout;
+	}
+
+	/**
+	 * @param timeout minutes, must be greater than 0
+	 */
+	public void setTimeout(long timeout) {
+		this.timeout = timeout;
+	}
 }
