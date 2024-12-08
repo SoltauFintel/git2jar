@@ -1,4 +1,4 @@
-package git2jar.build;
+package git2jar.job;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import org.pmw.tinylog.Logger;
 
-import git2jar.build.Job.JobStatus;
+import git2jar.job.Job.JobStatus;
 import git2jar.project.Project;
 import git2jar.project.ProjectService;
 

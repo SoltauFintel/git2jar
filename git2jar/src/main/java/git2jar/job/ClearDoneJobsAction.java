@@ -1,4 +1,4 @@
-package git2jar.build;
+package git2jar.job;
 
 import github.soltaufintel.amalia.web.action.Action;
 

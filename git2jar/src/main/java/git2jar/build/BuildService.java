@@ -10,6 +10,7 @@ import com.google.common.io.Files;
 import git2jar.base.Config;
 import git2jar.base.FileService;
 import git2jar.docker.AbstractDocker;
+import git2jar.job.Job;
 import git2jar.project.Project;
 import git2jar.project.ProjectService;
 

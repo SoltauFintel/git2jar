@@ -1,9 +1,9 @@
 package git2jar.project;
 
-import git2jar.build.JobStatusPage;
-import git2jar.build.ClearDoneJobsAction;
-import git2jar.build.CreateJobAction;
 import git2jar.build.DeletePackageAction;
+import git2jar.job.ClearDoneJobsAction;
+import git2jar.job.CreateJobAction;
+import git2jar.job.JobStatusPage;
 import github.soltaufintel.amalia.web.route.RouteDefinitions;
 
 /**

@@ -1,6 +1,6 @@
-package git2jar.build;
+package git2jar.job;
 
-import git2jar.build.Job.JobStatus;
+import git2jar.job.Job.JobStatus;
 import github.soltaufintel.amalia.web.action.Page;
 
 public class JobStatusPage extends Page {

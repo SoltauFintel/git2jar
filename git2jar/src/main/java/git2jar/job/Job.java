@@ -1,7 +1,9 @@
-package git2jar.build;
+package git2jar.job;
 
 import org.pmw.tinylog.Logger;
 
+import git2jar.build.BuildResult;
+import git2jar.build.BuildService;
 import git2jar.project.Project;
 import github.soltaufintel.amalia.base.IdGenerator;
 
