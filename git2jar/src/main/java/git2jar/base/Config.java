@@ -1,4 +1,4 @@
-package git2jar.config;
+package git2jar.base;
 
 import java.io.File;
 

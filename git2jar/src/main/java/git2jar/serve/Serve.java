@@ -4,7 +4,7 @@ import java.io.File;
 
 import org.pmw.tinylog.Logger;
 
-import git2jar.config.Config;
+import git2jar.base.Config;
 import github.soltaufintel.amalia.web.route.RouteDefinitions;
 import spark.Route;
 import spark.Spark;

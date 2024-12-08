@@ -9,9 +9,9 @@ import java.util.stream.Stream;
 import org.eclipse.jgit.util.FileUtils;
 import org.pmw.tinylog.Logger;
 
+import git2jar.base.Config;
 import git2jar.base.FileService;
 import git2jar.build.GitService;
-import git2jar.config.Config;
 import github.soltaufintel.amalia.base.IdGenerator;
 
 public class ProjectService {

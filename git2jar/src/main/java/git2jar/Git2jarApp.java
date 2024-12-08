@@ -2,7 +2,7 @@ package git2jar;
 
 import org.pmw.tinylog.Level;
 
-import git2jar.config.Config;
+import git2jar.base.Config;
 import git2jar.project.Web;
 import git2jar.serve.Serve;
 import github.soltaufintel.amalia.auth.simple.SimpleAuth;

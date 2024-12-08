@@ -10,10 +10,10 @@ import org.pmw.tinylog.Logger;
 
 import com.google.common.io.Files;
 
+import git2jar.base.Config;
 import git2jar.base.FileService;
 import git2jar.base.ShellScriptExecutor;
 import git2jar.build.Job.JobStatus;
-import git2jar.config.Config;
 import git2jar.docker.AbstractDocker;
 import git2jar.docker.UnixDocker;
 import git2jar.docker.WindowsDocker;

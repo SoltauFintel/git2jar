@@ -6,7 +6,7 @@ import java.nio.file.Files;
 import org.pmw.tinylog.Logger;
 
 import git2jar.Git2jarApp;
-import git2jar.config.Config;
+import git2jar.base.Config;
 import spark.Request;
 import spark.Response;
 import spark.Route;
