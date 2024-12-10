@@ -11,13 +11,13 @@ import org.pmw.tinylog.Logger;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.async.ResultCallback;
 import com.github.dockerjava.api.command.BuildImageResultCallback;
+import com.github.dockerjava.api.command.InspectContainerResponse;
 import com.github.dockerjava.api.command.LogContainerCmd;
 import com.github.dockerjava.api.command.PullImageResultCallback;
 import com.github.dockerjava.api.model.AccessMode;
 import com.github.dockerjava.api.model.Bind;
 import com.github.dockerjava.api.model.Frame;
 import com.github.dockerjava.api.model.HostConfig;
-import com.github.dockerjava.api.model.Info;
 import com.github.dockerjava.api.model.Volume;
 
 import git2jar.base.Config;
@@ -68,8 +68,9 @@ public abstract class AbstractDocker {
         
         // waiting for container end
         long start = System.currentTimeMillis();
-        Info in = docker.infoCmd().exec();
-        while (in.getContainersRunning() > 0) {
+        InspectContainerResponse in = docker.inspectContainerCmd(id).exec();
+        while (Boolean.TRUE.equals(in.getState().getRunning())) {
+            Logger.info(in.getState().getStatus());
         	try {
 				Thread.sleep(3000);
 			} catch (InterruptedException e) {
@@ -85,9 +86,9 @@ public abstract class AbstractDocker {
         		return ret;
         	}
         	
-        	in = docker.infoCmd().exec();
+	        in = docker.inspectContainerCmd(id).exec();
         }
-        Logger.info("Container ended.");
+        Logger.info("Container ended. " + in.getState().getStatus());
         ret.setLog(logs(id)); // retrieve logs
         return ret;
     }
