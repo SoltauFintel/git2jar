@@ -31,7 +31,7 @@ import spark.Spark;
  * WEB contains project and build. Both apps share the repository folder.
  */
 public class Git2jarApp {
-    public static final String VERSION = "0.1.0";
+    public static final String VERSION = "0.1.1";
     
     public static void main(String[] args) {
         String mode = System.getenv("MODE");
@@ -90,7 +90,9 @@ public class Git2jarApp {
             .boot();
         System.out.println("==== serve mode ====");
         File dir = Config.config.getRepositoryDir();
-        if (!dir.isDirectory()) {
+        if (dir.isDirectory()) {
+            Logger.info("serve dir: " + dir.getAbsolutePath());
+        } else {
             Logger.error("Repository folder does not exist: " + dir.getAbsolutePath());
         }
     }
@@ -99,6 +101,11 @@ public class Git2jarApp {
         
         @Override
         public void routes() {
+            Route info = (req, res) -> "git2jar " + VERSION + " (serve mode)";
+            Spark.get("/rest/info", info);
+            Spark.get("/rest/_info", info);
+            Spark.get("/", info);
+            
             Spark.head("/*", new FileRoute());
             Spark.get("/*", new FileRoute());
 
