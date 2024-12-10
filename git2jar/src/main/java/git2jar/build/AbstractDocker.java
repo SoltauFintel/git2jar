@@ -51,9 +51,10 @@ public abstract class AbstractDocker {
         }
     }
 
-    public BuildResult run(String image, File hostDir, String containerDir) {
+    public BuildResult run(String image, String hostDir, String containerDir) {
 		List<Bind> binds = new ArrayList<>();
-		binds.add(new Bind(hostDir.getAbsolutePath(), new Volume(containerDir), AccessMode.rw));
+		Logger.info("host dir: " + hostDir + " = container dir: " + containerDir);
+		binds.add(new Bind(hostDir, new Volume(containerDir), AccessMode.rw));
     	
         String id = docker.createContainerCmd(image)
             .withHostConfig(new HostConfig().withBinds(binds))

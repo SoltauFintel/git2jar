@@ -24,19 +24,23 @@ public class BuildService {
 		FileService.savePlainTextFile(new File(dir, "SCRIPT"), cmd);
 		String image = Config.config.getImage();
 		AbstractDocker docker = AbstractDocker.get();
+        String hostDir = System.getenv("VOLUME") + "/" + job.getJobId();
+        if (docker instanceof WindowsDocker) {
+            hostDir = dir.getAbsolutePath();
+        }
 		long start = System.currentTimeMillis();
 		BuildResult ret;
 		try {
 		
 			docker.pull(image);
-			ret = docker.run(image, dir, "/work");
+			ret = docker.run(image, hostDir, "/work");
 		
 		} catch (NotFoundException e) {
 			try {
 				Logger.warn("Image '" + image + "' not found. Building it...");
 				buildImage(docker, image);
 				Logger.info("Docker base image built. Now retrying the actual build...");
-				ret = docker.run(image, dir, "/work");
+				ret = docker.run(image, hostDir, "/work");
 			} catch (Exception ex) {
 				Logger.error(ex);
 				ret = new BuildResult();
