@@ -11,10 +11,6 @@ docker {
 dockerCreateDockerfile {
     outputs.upToDateWhen { false }
     doLast {
-        copy {
-            from 'test/gradle-8.4-bin.zip'
-            into 'build/docker'
-        }
         def dockerfile = destFile.get().asFile
         dockerfile.text = dockerfile.text.replace('WORKDIR', 'RUN apk add bash nano\nENV TZ=Europe/Berlin\nWORKDIR')
     }
