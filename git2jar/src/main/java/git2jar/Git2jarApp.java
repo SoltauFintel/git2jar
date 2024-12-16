@@ -21,7 +21,6 @@ import git2jar.project.ReloadProjectsAction;
 import git2jar.serve.FileRoute;
 import github.soltaufintel.amalia.web.builder.LoggingInitializer;
 import github.soltaufintel.amalia.web.builder.WebAppBuilder;
-import github.soltaufintel.amalia.web.config.AppConfig;
 import github.soltaufintel.amalia.web.route.RouteDefinitions;
 import spark.Route;
 import spark.Spark;
@@ -32,6 +31,11 @@ import spark.Spark;
  */
 public final class Git2jarApp {
     public static final String VERSION = "0.2.0";
+    
+    /* TODO wenn der eine Anfrage bekommt, aber die Lib nicht da ist,
+            das Project bekannt ist, dann muss er das onthefly bauen
+       TODO SERVE muss case-insensitive werden
+     */
     
     public static void main(String[] args) {
         runWeb();
@@ -45,7 +49,7 @@ public final class Git2jarApp {
 
     private static void runWeb() {
         getWebAppBuilder()
-            .withAuth(new Git2jarAuth(new AppConfig())) // TODO Amalia withAuth: Ich brauch hier die config.
+            .withAuth(config -> new Git2jarAuth(config))
             .withTemplatesFolders(Git2jarApp.class, "/templates")
             .withRoutes(new WebRoutes())
             .build()
