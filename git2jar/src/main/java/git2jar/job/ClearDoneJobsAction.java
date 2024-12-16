@@ -11,6 +11,6 @@ public class ClearDoneJobsAction extends Action {
 	protected void execute() {
 		new JobService().clearDoneJobs();
 		
-		ctx.redirect("/");
+		ctx.redirect("/project/home");
 	}
 }

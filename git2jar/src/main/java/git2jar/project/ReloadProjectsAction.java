@@ -8,6 +8,6 @@ public class ReloadProjectsAction extends Action {
 	protected void execute() {
 		new ProjectService().clearCache();
 
-		ctx.redirect("/");
+		ctx.redirect("/project/home");
 	}
 }

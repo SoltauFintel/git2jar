@@ -7,6 +7,7 @@ import org.pmw.tinylog.Logger;
 
 import git2jar.base.Config;
 import git2jar.base.FileService;
+import git2jar.base.Git2jarAuth;
 import git2jar.build.DeletePackageAction;
 import git2jar.job.ClearDoneJobsAction;
 import git2jar.job.CreateJobAction;
@@ -18,7 +19,6 @@ import git2jar.project.IndexPage;
 import git2jar.project.ProjectsPage;
 import git2jar.project.ReloadProjectsAction;
 import git2jar.serve.FileRoute;
-import github.soltaufintel.amalia.auth.simple.SimpleAuth;
 import github.soltaufintel.amalia.web.builder.LoggingInitializer;
 import github.soltaufintel.amalia.web.builder.WebAppBuilder;
 import github.soltaufintel.amalia.web.config.AppConfig;
@@ -30,19 +30,11 @@ import spark.Spark;
  * The git2jar project contains 2 applications: WEB and SERVE.
  * WEB contains project and build. Both apps share the repository folder.
  */
-public class Git2jarApp {
-    public static final String VERSION = "0.1.1";
+public final class Git2jarApp {
+    public static final String VERSION = "0.2.0";
     
     public static void main(String[] args) {
-        String mode = System.getenv("MODE");
-        if ("SERVE".equalsIgnoreCase(mode)) {
-            serve();
-        } else if ("WEB".equalsIgnoreCase(mode)) {
-            runWeb();
-        } else {
-            System.err.println("Please set env var MODE to 'SERVE' or 'WEB'. Unsupported mode: " + mode);
-            System.exit(500);
-        }
+        runWeb();
     }
 
 	private static WebAppBuilder getWebAppBuilder() {
@@ -53,14 +45,23 @@ public class Git2jarApp {
 
     private static void runWeb() {
         getWebAppBuilder()
-            .withAuth(new SimpleAuth(new AppConfig())) // TODO Amalia withAuth: Ich brauch hier die config.
+            .withAuth(new Git2jarAuth(new AppConfig())) // TODO Amalia withAuth: Ich brauch hier die config.
             .withTemplatesFolders(Git2jarApp.class, "/templates")
             .withRoutes(new WebRoutes())
             .build()
             .boot();
-        System.out.println("==== web mode ====");
+        
+        // web ----
         if (Config.config.getJobsWorkDir().isDirectory()) {
         	FileService.deleteDir(Config.config.getJobsWorkDir());
+        }
+        
+        // serve ----
+        File dir = Config.config.getRepositoryDir();
+        if (dir.isDirectory()) {
+            Logger.info("serve dir: " + dir.getAbsolutePath());
+        } else {
+            Logger.error("Repository folder does not exist: " + dir.getAbsolutePath());
         }
     }
     
@@ -68,7 +69,8 @@ public class Git2jarApp {
 
         @Override
         public void routes() {
-            get("/", IndexPage.class);
+            Spark.get("/", (req, res) -> { res.redirect("/project/home"); return ""; });
+            get("/project/home", IndexPage.class);
             form("/project/add", AddProjectPage.class);
             get("/project/delete", DeleteProjectAction.class);
             get("/project/reload", ReloadProjectsAction.class);
@@ -79,47 +81,13 @@ public class Git2jarApp {
             get("/project/:id/:tag/build", CreateJobAction.class);
             get("/job/:jobId", JobStatusPage.class);
             get("/project/:id/:tag/delete", DeletePackageAction.class);
-        }
-    }
-    
-    private static void serve() {
-        // not password protected
-        getWebAppBuilder()
-            .withRoutes(new ServeRoutes())
-            .build()
-            .boot();
-        System.out.println("==== serve mode ====");
-        File dir = Config.config.getRepositoryDir();
-        if (dir.isDirectory()) {
-            Logger.info("serve dir: " + dir.getAbsolutePath());
-        } else {
-            Logger.error("Repository folder does not exist: " + dir.getAbsolutePath());
-        }
-    }
-    
-    private static class ServeRoutes extends RouteDefinitions {
-        
-        @Override
-        public void routes() {
-            Route info = (req, res) -> "git2jar " + VERSION + " (serve mode)";
+
+            Route info = (req, res) -> "git2jar " + VERSION;
             Spark.get("/rest/info", info);
             Spark.get("/rest/_info", info);
-            Spark.get("/", info);
-            
+
             Spark.head("/*", new FileRoute());
             Spark.get("/*", new FileRoute());
-
-    		Route route404 = (req, res) -> {
-    			Logger.warn(req.requestMethod() + " " + req.pathInfo());
-    			res.status(404);
-    			return "Unsupported endpoint";
-    		};
-    		Spark.post("/*", route404);
-    		Spark.put("/*", route404);
-    		Spark.delete("/*", route404);
-    		Spark.options("/*", route404);
-    		Spark.connect("/*", route404);
-    		Spark.trace("/*", route404);
         }
     }
 }

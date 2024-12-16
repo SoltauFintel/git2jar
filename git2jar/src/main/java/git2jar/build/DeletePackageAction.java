@@ -16,6 +16,6 @@ public class DeletePackageAction extends Action {
 			Logger.info("package deleted: #" + id + ", tag " + tag);
 		}
 		
-		ctx.redirect("/");
+		ctx.redirect("/project/home");
 	}
 }

@@ -6,7 +6,7 @@ import org.pmw.tinylog.Logger;
 
 import github.soltaufintel.amalia.web.config.AppConfig;
 
-public class Config {
+public final class Config {
     public static Config config;
 
     /** persistent folder containing projects data */
