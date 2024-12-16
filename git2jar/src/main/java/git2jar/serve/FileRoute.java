@@ -23,7 +23,16 @@ public class FileRoute implements Route {
         } else if (path == null || path.contains("..") || path.replace("\\", "/").contains("//")/* ~UNC */) {
             Logger.error(p + "Illegal path: " + path);
         } else {
-            File file = new File(Config.config.getRepositoryDir(), path);
+            File repositoryDir = Config.config.getRepositoryDir();
+            File file = new File(repositoryDir, path);
+            if (!file.exists()) {
+                String s = path.replace("\\", "/");
+                if (s.startsWith("/")) s = s.substring(1);
+                File file2 = search(repositoryDir, s.split("/"));
+                if (file2 != null) {
+                    file = file2;
+                }
+            }
             if (file.isFile()) {
                 try {
                     if ("HEAD".equalsIgnoreCase(req.requestMethod())) {
@@ -43,5 +52,30 @@ public class FileRoute implements Route {
         }
         res.status(404);
         return "File not found";
+    }
+
+    // case-insensitive search
+    private File search(File repo, String[] path) {
+        File folder = repo;
+        for (int index = 0; index < path.length - 1; index++) {
+            File x = search2(folder, true, path[index]);
+            if (x == null) { // not found
+                return null;
+            }
+            folder = x;
+        }
+        return search2(folder, false, path[path.length - 1]);
+    }
+    
+    private File search2(File folder, boolean mustDir, String name) {
+        File[] files = folder.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory() == mustDir && file.getName().equalsIgnoreCase(name)) {
+                    return file;
+                }
+            }
+        }
+        return null;
     }
 }

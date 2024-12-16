@@ -25,11 +25,7 @@ import github.soltaufintel.amalia.web.route.RouteDefinitions;
 import spark.Route;
 import spark.Spark;
 
-/**
- * The git2jar project contains 2 applications: WEB and SERVE.
- * WEB contains project and build. Both apps share the repository folder.
- */
-public final class Git2jarApp {
+public final class Git2jarApp extends RouteDefinitions {
     public static final String VERSION = "0.2.0";
     
     /* TODO wenn der eine Anfrage bekommt, aber die Lib nicht da ist,
@@ -51,7 +47,7 @@ public final class Git2jarApp {
         getWebAppBuilder()
             .withAuth(config -> new Git2jarAuth(config))
             .withTemplatesFolders(Git2jarApp.class, "/templates")
-            .withRoutes(new WebRoutes())
+            .withRoutes(new Git2jarApp())
             .build()
             .boot();
         
@@ -69,29 +65,26 @@ public final class Git2jarApp {
         }
     }
     
-    private static class WebRoutes extends RouteDefinitions {
+    @Override
+    public void routes() {
+        Spark.get("/", (req, res) -> { res.redirect("/project/home"); return ""; });
+        get("/project/home", IndexPage.class);
+        form("/project/add", AddProjectPage.class);
+        get("/project/delete", DeleteProjectAction.class);
+        get("/project/reload", ReloadProjectsAction.class);
+        get("/project/clear-done-jobs", ClearDoneJobsAction.class);
+        form("/project/:id", EditProjectPage.class);
+        get("/project", ProjectsPage.class);
+        
+        get("/project/:id/:tag/build", CreateJobAction.class);
+        get("/job/:jobId", JobStatusPage.class);
+        get("/project/:id/:tag/delete", DeletePackageAction.class);
 
-        @Override
-        public void routes() {
-            Spark.get("/", (req, res) -> { res.redirect("/project/home"); return ""; });
-            get("/project/home", IndexPage.class);
-            form("/project/add", AddProjectPage.class);
-            get("/project/delete", DeleteProjectAction.class);
-            get("/project/reload", ReloadProjectsAction.class);
-            get("/project/clear-done-jobs", ClearDoneJobsAction.class);
-            form("/project/:id", EditProjectPage.class);
-            get("/project", ProjectsPage.class);
-            
-            get("/project/:id/:tag/build", CreateJobAction.class);
-            get("/job/:jobId", JobStatusPage.class);
-            get("/project/:id/:tag/delete", DeletePackageAction.class);
+        Route info = (req, res) -> "git2jar " + VERSION;
+        Spark.get("/rest/info", info);
+        Spark.get("/rest/_info", info);
 
-            Route info = (req, res) -> "git2jar " + VERSION;
-            Spark.get("/rest/info", info);
-            Spark.get("/rest/_info", info);
-
-            Spark.head("/*", new FileRoute());
-            Spark.get("/*", new FileRoute());
-        }
+        Spark.head("/*", new FileRoute());
+        Spark.get("/*", new FileRoute());
     }
 }
