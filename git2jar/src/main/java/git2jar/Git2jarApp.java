@@ -30,7 +30,6 @@ public final class Git2jarApp extends RouteDefinitions {
     
     /* TODO wenn der eine Anfrage bekommt, aber die Lib nicht da ist,
             das Project bekannt ist, dann muss er das onthefly bauen
-       TODO SERVE muss case-insensitive werden
      */
     
     public static void main(String[] args) {
