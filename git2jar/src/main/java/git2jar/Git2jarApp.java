@@ -29,6 +29,29 @@ public final class Git2jarApp extends RouteDefinitions {
     public static final String VERSION = "0.2.0";
     
     // TODO wenn der eine Anfrage bekommt, aber die Lib nicht da ist, das Project bekannt ist, dann muss er das onthefly bauen
+
+    @Override
+    public void routes() {
+        Spark.get("/", (req, res) -> { res.redirect("/project/home"); return ""; });
+        get("/project/home", IndexPage.class);
+        form("/project/add", AddProjectPage.class);
+        get("/project/delete", DeleteProjectAction.class);
+        get("/project/reload", ReloadProjectsAction.class);
+        get("/project/clear-done-jobs", ClearDoneJobsAction.class);
+        form("/project/:id", EditProjectPage.class);
+        get("/project", ProjectsPage.class);
+        
+        get("/project/:id/:tag/build", CreateJobAction.class);
+        get("/job/:jobId", JobStatusPage.class);
+        get("/project/:id/:tag/delete", DeletePackageAction.class);
+
+        Route info = (req, res) -> "git2jar " + VERSION;
+        Spark.get("/rest/info", info);
+        Spark.get("/rest/_info", info);
+
+        Spark.head("/*", new FileRoute());
+        Spark.get("/*", new FileRoute());
+    }
     
     public static void main(String[] args) {
         new WebAppBuilder(VERSION)
@@ -52,28 +75,5 @@ public final class Git2jarApp extends RouteDefinitions {
         } else {
             Logger.error("Repository folder does not exist: " + dir.getAbsolutePath());
         }
-    }
-
-    @Override
-    public void routes() {
-        Spark.get("/", (req, res) -> { res.redirect("/project/home"); return ""; });
-        get("/project/home", IndexPage.class);
-        form("/project/add", AddProjectPage.class);
-        get("/project/delete", DeleteProjectAction.class);
-        get("/project/reload", ReloadProjectsAction.class);
-        get("/project/clear-done-jobs", ClearDoneJobsAction.class);
-        form("/project/:id", EditProjectPage.class);
-        get("/project", ProjectsPage.class);
-        
-        get("/project/:id/:tag/build", CreateJobAction.class);
-        get("/job/:jobId", JobStatusPage.class);
-        get("/project/:id/:tag/delete", DeletePackageAction.class);
-
-        Route info = (req, res) -> "git2jar " + VERSION;
-        Spark.get("/rest/info", info);
-        Spark.get("/rest/_info", info);
-
-        Spark.head("/*", new FileRoute());
-        Spark.get("/*", new FileRoute());
     }
 }
