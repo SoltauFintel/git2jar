@@ -28,31 +28,21 @@ import spark.Spark;
 public final class Git2jarApp extends RouteDefinitions {
     public static final String VERSION = "0.2.0";
     
-    /* TODO wenn der eine Anfrage bekommt, aber die Lib nicht da ist,
-            das Project bekannt ist, dann muss er das onthefly bauen
-     */
+    // TODO wenn der eine Anfrage bekommt, aber die Lib nicht da ist, das Project bekannt ist, dann muss er das onthefly bauen
     
     public static void main(String[] args) {
-        runWeb();
-    }
-
-	private static WebAppBuilder getWebAppBuilder() {
-		return new WebAppBuilder(VERSION)
+        new WebAppBuilder(VERSION)
             .withLogging(new LoggingInitializer(Level.INFO, "{date} {level}  {message}"))
-            .withInitializer(c -> Config.config = new Config(c));
-	}
-
-    private static void runWeb() {
-        getWebAppBuilder()
             .withAuth(config -> new Git2jarAuth(config))
             .withTemplatesFolders(Git2jarApp.class, "/templates")
+            .withInitializer(c -> Config.config = new Config(c))
             .withRoutes(new Git2jarApp())
             .build()
             .boot();
         
         // web ----
         if (Config.config.getJobsWorkDir().isDirectory()) {
-        	FileService.deleteDir(Config.config.getJobsWorkDir());
+            FileService.deleteDir(Config.config.getJobsWorkDir());
         }
         
         // serve ----
@@ -63,7 +53,7 @@ public final class Git2jarApp extends RouteDefinitions {
             Logger.error("Repository folder does not exist: " + dir.getAbsolutePath());
         }
     }
-    
+
     @Override
     public void routes() {
         Spark.get("/", (req, res) -> { res.redirect("/project/home"); return ""; });
