@@ -41,6 +41,7 @@ public class FileRoute implements Route {
                     } else {
                         Logger.info(p + file.getAbsolutePath());
                         res.type("application/octet-stream");
+                        res.header("Content-disposition", "attachment; filename=" + file.getName());
                         return Files.readAllBytes(file.toPath());
                     }
                 } catch (Exception e) {
