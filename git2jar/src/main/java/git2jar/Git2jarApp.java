@@ -26,7 +26,7 @@ import spark.Route;
 import spark.Spark;
 
 public final class Git2jarApp extends RouteDefinitions {
-    public static final String VERSION = "0.2.0";
+    public static final String VERSION = "0.2.1";
     
     // TODO auth/logout wird nicht gefunden
     // TODO wenn der eine Anfrage bekommt, aber die Lib nicht da ist, das Project bekannt ist, dann muss er das onthefly bauen

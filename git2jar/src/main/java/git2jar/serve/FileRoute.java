@@ -16,6 +16,7 @@ public class FileRoute implements Route {
 	
     @Override
     public Object handle(Request req, Response res) throws Exception {
+        Logger.info("FileRoute | " + req.requestMethod() + " | " + req.pathInfo()); // XXX DEBUG
         String p = req.ip() + " | " + req.requestMethod() + " | ";
         String path = req.pathInfo();
         if ("/".equals(path)) {
@@ -25,6 +26,7 @@ public class FileRoute implements Route {
         } else {
             File repositoryDir = Config.config.getRepositoryDir();
             File file = new File(repositoryDir, path);
+            Logger.info("FileRoute file: " + file.getAbsolutePath() + ", " + file.exists()); // XXX DEBUG
             if (!file.exists()) {
                 String s = path.replace("\\", "/");
                 if (s.startsWith("/")) s = s.substring(1);
