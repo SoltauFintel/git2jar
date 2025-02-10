@@ -26,7 +26,7 @@ import spark.Route;
 import spark.Spark;
 
 public final class Git2jarApp extends RouteDefinitions {
-    public static final String VERSION = "0.2.1";
+    public static final String VERSION = "0.2.0";
     
     // TODO auth/logout wird nicht gefunden
     // TODO wenn der eine Anfrage bekommt, aber die Lib nicht da ist, das Project bekannt ist, dann muss er das onthefly bauen
@@ -57,18 +57,9 @@ public final class Git2jarApp extends RouteDefinitions {
     public static void main(String[] args) {
         new WebAppBuilder(VERSION)
             .withLogging(new LoggingInitializer(Level.INFO, "{date} {level}  {message}"))
-<<<<<<< Upstream, based on branch 'master' of https://github.com/SoltauFintel/git2jar.git
             .withAuth(config -> new Git2jarAuth(config))
-=======
-            .withInitializer(c -> Config.config = new Config(c));
-	}
-
-    private static void runWeb() {
-        getWebAppBuilder()
-            .withAuth(new SimpleAuth(new AppConfig())) // TODO Amalia withAuth: Ich brauch hier die config. -> ist erledigt
->>>>>>> 3fef942 comment
-            .withTemplatesFolders(Git2jarApp.class, "/templates")
             .withInitializer(c -> Config.config = new Config(c))
+            .withTemplatesFolders(Git2jarApp.class, "/templates")
             .withRoutes(new Git2jarApp())
             .build()
             .boot();
